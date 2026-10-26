@@ -2,108 +2,49 @@ package com.example.tourcompanion
 
 import android.content.Context
 
-class QueryProcessor(
-    context: Context
-) {
-    private val databaseHelper = TravelDatabaseHelper(context)
+/**
+ * Loads the travel tips from the database once and answers questions with TipMatcher.
+ * Public API unchanged: processQuery(question): TravelTip?
+ *
+ * Call warmUp() from a background thread (the splash screen does) so the first
+ * question never does database work on the main thread.
+ */
+class QueryProcessor(context: Context) {
 
-    fun processQuery(question: String): TravelTip? {
+    private val appContext = context.applicationContext
 
-        val words = question
-            .lowercase()
-            .replace(Regex("[^a-z0-9\\s]"), " ")
-            .split("\\s+".toRegex())
-            .filter { it.isNotBlank() }
+    private val matcher: TipMatcher by lazy { TipMatcher(loadTips(), TravelDatabaseHelper.ANSWER_SEP) }
 
-        val db = databaseHelper.readableDatabase
+    fun warmUp() {
+        check(matcher.size > 0) { "travel_tips table is empty" }
+    }
 
-        val cursor = db.rawQuery(
-            "SELECT topic, keywords, answer FROM travel_tips",
-            null
-        )
+    fun processQuery(question: String): TravelTip? = matcher.match(question)
 
-        var bestResult: TravelTip? = null
-        var bestScore = 0
+    private fun loadTips(): List<TravelTip> {
 
-        while (cursor.moveToNext()) {
+        val helper = TravelDatabaseHelper(appContext)
+        val result = ArrayList<TravelTip>()
 
-            val topic = cursor.getString(0)
-            val keywordsText = cursor.getString(1)
-            val answer = cursor.getString(2)
-
-            val keywords = keywordsText
-                .split(",")
-                .map { it.trim().lowercase() }
-
-            var score = 0
-
-            for (keyword in keywords) {
-
-                // Exact keyword match gets a strong score
-                if (words.contains(keyword)) {
-                    score += 10
-                }
-
-                // Singular/plural matching
-                if (keyword.endsWith("s") &&
-                    words.contains(keyword.dropLast(1))
-                ) {
-                    score += 8
-                }
-
-                if (words.any { word ->
-                        word.endsWith("s") &&
-                                word.dropLast(1) == keyword
+        try {
+            helper.readableDatabase
+                .rawQuery("SELECT topic, keywords, answer FROM travel_tips ORDER BY id", null)
+                .use { cursor ->
+                    while (cursor.moveToNext()) {
+                        result += TravelTip(
+                            topic = cursor.getString(0),
+                            keywords = cursor.getString(1)
+                                .split(",")
+                                .map { it.trim() }
+                                .filter { it.isNotEmpty() },
+                            answer = cursor.getString(2)
+                        )
                     }
-                ) {
-                    score += 8
                 }
-            }
-
-            /*
-             * Generic words should not dominate specific topics.
-             * For example:
-             * "where" + "find" should not beat "ATM".
-             */
-            val genericWords = setOf(
-                "where",
-                "what",
-                "how",
-                "can",
-                "is",
-                "the",
-                "a",
-                "an",
-                "i",
-                "me",
-                "my",
-                "do",
-                "should",
-                "tell",
-                "please"
-            )
-
-            for (word in words) {
-                if (word !in genericWords &&
-                    keywords.contains(word)
-                ) {
-                    score += 5
-                }
-            }
-
-            if (score > bestScore) {
-                bestScore = score
-
-                bestResult = TravelTip(
-                    topic = topic,
-                    keywords = keywords,
-                    answer = answer
-                )
-            }
+        } finally {
+            helper.close()
         }
 
-        cursor.close()
-
-        return bestResult
+        return result
     }
 }

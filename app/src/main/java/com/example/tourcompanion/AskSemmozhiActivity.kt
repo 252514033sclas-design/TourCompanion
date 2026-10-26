@@ -1,46 +1,53 @@
 package com.example.tourcompanion
 
 import android.os.Bundle
-import android.speech.tts.TextToSpeech
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import java.util.Locale
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
-class AskSemmozhiActivity : AppCompatActivity(),
-    TextToSpeech.OnInitListener {
+class AskSemmozhiActivity : AppCompatActivity() {
 
     private lateinit var questionInput: EditText
     private lateinit var askButton: Button
     private lateinit var answerText: TextView
     private lateinit var saathiView: SaathiView
 
-    private lateinit var textToSpeech: TextToSpeech
-    private lateinit var queryProcessor: QueryProcessor
+    private lateinit var speaker: Speaker
+    private lateinit var repository: AnswerRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         supportActionBar?.hide()
-
         setContentView(R.layout.activity_ask_semmozhi)
 
         questionInput = findViewById(R.id.askQuestionInput)
         askButton = findViewById(R.id.askSemmozhiButton)
-        val backAskButton = findViewById<Button>(R.id.backAskButton)
-
-        backAskButton.setOnClickListener {
-            finish()
-        }
         answerText = findViewById(R.id.askAnswerText)
         saathiView = findViewById(R.id.saathiViewAsk)
 
-        queryProcessor = QueryProcessor(this)
-        textToSpeech = TextToSpeech(this, this)
+        findViewById<Button>(R.id.backAskButton).setOnClickListener { finish() }
 
-        askButton.setOnClickListener {
-            processQuestion()
+        repository = AnswerRepository(this)
+        speaker = Speaker(this, saathiView)
+
+        askButton.setOnClickListener { processQuestion() }
+
+        questionInput.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEND ||
+                actionId == EditorInfo.IME_ACTION_DONE ||
+                actionId == EditorInfo.IME_ACTION_GO
+            ) {
+                processQuestion()
+                true
+            } else {
+                false
+            }
         }
     }
 
@@ -49,62 +56,31 @@ class AskSemmozhiActivity : AppCompatActivity(),
         val question = questionInput.text.toString().trim()
 
         if (question.isEmpty()) {
-            answerText.text = "Please type a question first."
+            answerText.text = getString(R.string.type_question_first)
             return
         }
 
-        val result = queryProcessor.processQuery(question)
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(questionInput.windowToken, 0)
 
-        if (result != null) {
+        answerText.text = getString(R.string.thinking)
+        askButton.isEnabled = false
 
-            answerText.text = result.answer
-            speakAnswer(result.answer)
-
-        } else {
-
-            val message =
-                "I'm sorry, I don't have information about that yet."
-
-            answerText.text = message
-            speakAnswer(message)
+        lifecycleScope.launch {
+            val answer = repository.answer(question)
+            answerText.text = answer.text
+            speaker.speak(answer.text)
+            askButton.isEnabled = true
         }
     }
 
-    private fun speakAnswer(answer: String) {
-
-        saathiView.setSpeaking(true)
-
-        textToSpeech.speak(
-            answer,
-            TextToSpeech.QUEUE_FLUSH,
-            null,
-            "SemmozhiAnswer"
-        )
-
-        val duration = (answer.length * 55L)
-            .coerceIn(2000L, 8000L)
-
-        saathiView.postDelayed({
-            saathiView.setSpeaking(false)
-        }, duration)
-    }
-
-    override fun onInit(status: Int) {
-
-        if (status == TextToSpeech.SUCCESS) {
-
-            textToSpeech.language = Locale.ENGLISH
-            textToSpeech.setSpeechRate(0.95f)
-        }
+    override fun onStop() {
+        speaker.stop()
+        super.onStop()
     }
 
     override fun onDestroy() {
-
-        if (::textToSpeech.isInitialized) {
-            textToSpeech.stop()
-            textToSpeech.shutdown()
-        }
-
+        speaker.shutdown()
         super.onDestroy()
     }
 }

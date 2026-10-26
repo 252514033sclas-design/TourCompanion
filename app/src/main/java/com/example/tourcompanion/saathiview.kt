@@ -9,6 +9,7 @@ import android.graphics.RectF
 import android.os.SystemClock
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.DrawableRes
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.sin
@@ -68,13 +69,13 @@ class SaathiView @JvmOverloads constructor(
     // ---------------------------------------------------------
 
     private enum class Mouth(
-        val resName: String
+        @DrawableRes val resId: Int
     ) {
-        REST("semmozhi_rest"),
-        A("semmozhi_a"),
-        E("semmozhi_e"),
-        O("semmozhi_o"),
-        M("semmozhi_m")
+        REST(R.drawable.semmozhi_rest),
+        A(R.drawable.semmozhi_a),
+        E(R.drawable.semmozhi_e),
+        O(R.drawable.semmozhi_o),
+        M(R.drawable.semmozhi_m)
     }
 
     private val bitmaps =
@@ -144,25 +145,15 @@ class SaathiView @JvmOverloads constructor(
                 inScaled = false
             }
 
-        for (mouth in Mouth.values()) {
-
-            val resourceId =
-                resources.getIdentifier(
-                    mouth.resName,
-                    "drawable",
-                    context.packageName
-                )
-
+        // Direct R.drawable references (not getIdentifier) so release builds
+        // never strip these images.
+        for (mouth in Mouth.entries) {
             bitmaps[mouth] =
-                if (resourceId != 0) {
-                    BitmapFactory.decodeResource(
-                        resources,
-                        resourceId,
-                        options
-                    )
-                } else {
-                    null
-                }
+                BitmapFactory.decodeResource(
+                    resources,
+                    mouth.resId,
+                    options
+                )
         }
     }
 

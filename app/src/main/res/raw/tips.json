@@ -1,0 +1,1012 @@
+{
+ "categories": [
+  {
+   "id": "transport",
+   "icon": "🚌",
+   "title": "Transport",
+   "tips": [
+    {
+     "topic": "Transport",
+     "keywords": "bus,train,metro,transport,taxi,auto",
+     "answers": [
+      "Use official or trusted transport services. Check the destination and fare before starting your journey."
+     ]
+    },
+    {
+     "topic": "Luggage",
+     "keywords": "luggage,bag,suitcase,baggage",
+     "answers": [
+      "Keep your luggage close to you in crowded places and avoid leaving valuable items unattended."
+     ]
+    },
+    {
+     "topic": "Railway Station",
+     "keywords": "railway,station,rail,platform",
+     "answers": [
+      "Arrive at the railway station with enough time, verify your platform and train details, and keep your belongings secure."
+     ]
+    },
+    {
+     "topic": "Airport",
+     "keywords": "airport,flight,boarding,terminal",
+     "answers": [
+      "Keep your identification and booking information ready and arrive early enough for security and boarding procedures."
+     ]
+    },
+    {
+     "topic": "Bus Station",
+     "keywords": "bus stand,bus station,bus stop,bus terminal",
+     "answers": [
+      "Confirm the bus route and destination before boarding and keep your belongings with you."
+     ]
+    },
+    {
+     "topic": "Auto Rickshaw",
+     "keywords": "auto,rickshaw,autorickshaw,auto driver,rickshaw driver",
+     "answers": [
+      "Before travelling by auto-rickshaw, confirm the destination and fare or use a trusted booking service."
+     ]
+    },
+    {
+     "topic": "Taxi",
+     "keywords": "taxi,cab,driver,booking",
+     "answers": [
+      "Use a trusted taxi service, verify the vehicle details, and check the destination before starting the trip."
+     ]
+    },
+    {
+     "topic": "Morning Travel",
+     "keywords": "morning,early,sunrise",
+     "answers": [
+      "For early travel, plan your transport in advance and make sure you know how to reach your destination."
+     ]
+    },
+    {
+     "topic": "Public Transport",
+     "keywords": "public transport,local transport",
+     "answers": [
+      "Use official public transport information and keep your belongings secure during the journey."
+     ]
+    },
+    {
+     "topic": "Evening Transport",
+     "keywords": "evening transport,night transport,late transport",
+     "answers": [
+      "For late travel, prefer trusted transport and verify the route and destination before starting."
+     ]
+    },
+    {
+     "topic": "Ride-hailing apps",
+     "keywords": "uber,ola,rapido,app cab,cab app,ride app",
+     "answers": [
+      "Booking a cab through an app shows the driver, car number and fare up front. Match the number plate before you get in, and share your trip details with someone you trust."
+     ]
+    },
+    {
+     "topic": "Prepaid taxi",
+     "keywords": "prepaid,prepaid taxi,prepaid booth,fixed fare",
+     "answers": [
+      "Many airports and railway stations have prepaid taxi counters with fixed fares. Pay at the official counter, not to people who approach you outside."
+     ]
+    },
+    {
+     "topic": "Metro and local trains",
+     "keywords": "metro,suburban,local train,commuter",
+     "answers": [
+      "Metro and suburban trains are often the quickest way through busy cities. Avoid peak hours with luggage, and keep your bag in front of you."
+     ]
+    },
+    {
+     "topic": "Booking train tickets",
+     "keywords": "irctc,ticket,reservation,tatkal,waitlist,train ticket",
+     "answers": [
+      "Book long-distance train tickets early through the official railway website or app, and check your coach and berth on the chart. Keep an ID handy because it may be checked on the journey."
+     ]
+    },
+    {
+     "topic": "Overnight journeys",
+     "keywords": "overnight,sleeper,night train,night bus,berth",
+     "answers": [
+      "On overnight trains or buses, keep valuables close, lock or chain your bags, and set an alarm before your stop."
+     ]
+    },
+    {
+     "topic": "Renting a vehicle",
+     "keywords": "rent,rental,scooter,bike,two wheeler,self drive,driving licence",
+     "answers": [
+      "If you rent a two-wheeler or car, check the vehicle, carry a valid licence, wear a helmet and follow local traffic rules. Traffic can be dense and unpredictable."
+     ]
+    },
+    {
+     "topic": "Crossing roads",
+     "keywords": "walk,walking,cross,crossing,road,pedestrian,footpath",
+     "answers": [
+      "Cross roads carefully because traffic may not stop for pedestrians. Use zebra crossings or foot-overbridges where available, and cross together with locals if you are unsure."
+     ]
+    },
+    {
+     "topic": "Traffic and delays",
+     "keywords": "traffic,jam,delay,delayed,miss,missed",
+     "answers": [
+      "Allow extra time for traffic, especially at peak hours and during festivals, so you do not miss trains or flights."
+     ]
+    },
+    {
+     "topic": "Bus travel",
+     "keywords": "bus ticket,conductor,state bus,sleeper bus",
+     "answers": [
+      "On a bus, ask the conductor or driver to confirm your stop, keep small change ready for the ticket and hold your bag in front of you."
+     ]
+    },
+    {
+     "topic": "Boats and ferries",
+     "keywords": "boat,ferry,lifejacket,life jacket,boating",
+     "answers": [
+      "Wear a life jacket on boats, avoid overloaded boats and follow the crew's instructions."
+     ]
+    },
+    {
+     "topic": "Cloakroom and lockers",
+     "keywords": "cloakroom,left luggage,locker,lockers,luggage storage",
+     "answers": [
+      "Railway stations and airports often have cloakrooms or lockers for luggage. Use official ones, keep the receipt and check the opening hours."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "money",
+   "icon": "💰",
+   "title": "Money & Payments",
+   "tips": [
+    {
+     "topic": "Money",
+     "keywords": "money,cash,atm,card,payment",
+     "answers": [
+      "Keep some emergency cash separately and use secure payment methods. Avoid displaying large amounts of money in public."
+     ]
+    },
+    {
+     "topic": "ATM Safety",
+     "keywords": "atm,withdraw,withdrawal,bank",
+     "answers": [
+      "Use ATMs in secure and well-lit locations, protect your PIN, and collect your card and cash before leaving."
+     ]
+    },
+    {
+     "topic": "Card Payment",
+     "keywords": "card,debit,credit,upi,payment",
+     "answers": [
+      "Keep payment information private and check the transaction amount before confirming a payment."
+     ]
+    },
+    {
+     "topic": "Lost Wallet",
+     "keywords": "wallet,lost wallet,missing wallet,wallet stolen,stolen wallet",
+     "answers": [
+      "If your wallet is lost, secure or block payment cards and report important identification documents if necessary."
+     ]
+    },
+    {
+     "topic": "Valuables",
+     "keywords": "valuable,jewelry,gold,expensive",
+     "answers": [
+      "Avoid displaying expensive valuables unnecessarily and keep important items secured while travelling."
+     ]
+    },
+    {
+     "topic": "UPI payments",
+     "keywords": "upi,qr,scan,gpay,phonepe,paytm,qr code",
+     "answers": [
+      "UPI is widely used in India for small payments. Check the name shown before you pay, never scan a QR code in order to receive money, and keep some cash as a backup."
+     ]
+    },
+    {
+     "topic": "Bargaining",
+     "keywords": "bargain,haggle,price,negotiate,overcharge,overcharged",
+     "answers": [
+      "In markets, bargaining is normal. Ask the price at a few shops, stay polite, and walk away calmly if the price feels too high. Fixed-price shops and meters help you compare."
+     ]
+    },
+    {
+     "topic": "Tipping",
+     "keywords": "tip,tipping,service charge,baksheesh",
+     "answers": [
+      "Tipping is appreciated but not always expected. Check whether a service charge is already on the bill, and keep small notes for porters, drivers and guides."
+     ]
+    },
+    {
+     "topic": "Currency exchange",
+     "keywords": "exchange,currency,forex,money changer,dollar,foreign currency",
+     "answers": [
+      "Exchange money only at banks, airports or authorised dealers, and keep the receipt. Avoid street changers who offer unusually good rates."
+     ]
+    },
+    {
+     "topic": "Small notes",
+     "keywords": "change,small notes,coins,break",
+     "answers": [
+      "Carry small notes and coins. Drivers and small shops often have no change for large notes."
+     ]
+    },
+    {
+     "topic": "Checking bills",
+     "keywords": "bill,receipt,invoice,gst,itemised",
+     "answers": [
+      "Check your bill before paying, ask for an itemised receipt and keep it until you leave, especially in hotels and restaurants."
+     ]
+    },
+    {
+     "topic": "Lost or blocked card",
+     "keywords": "card blocked,lost card,stolen card,block card",
+     "answers": [
+      "If a card is lost or stolen, call your bank straight away to block it. Note your bank's card helpline number before you travel."
+     ]
+    },
+    {
+     "topic": "Budgeting",
+     "keywords": "budget,cost,cheap,daily budget,spend,spending",
+     "answers": [
+      "Plan a daily budget for stay, food, transport and activities, and keep an extra buffer for surprises. The Budget Calculator in this app can help."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "food",
+   "icon": "🍛",
+   "title": "Food & Water",
+   "tips": [
+    {
+     "topic": "Food Safety",
+     "keywords": "food,restaurant,eat,meal",
+     "answers": [
+      "Choose clean and reputable food places, drink safe water, and be careful with unfamiliar foods if you have allergies."
+     ]
+    },
+    {
+     "topic": "Water",
+     "keywords": "water,drink,thirst,dehydration",
+     "answers": [
+      "Carry enough safe drinking water, especially during long journeys or hot weather."
+     ]
+    },
+    {
+     "topic": "Street food",
+     "keywords": "street food,stall,chaat,snacks,vendor",
+     "answers": [
+      "Choose busy stalls where food is cooked fresh and served hot. Avoid anything that has been sitting out, and carry hand sanitiser."
+     ]
+    },
+    {
+     "topic": "Vegetarian options",
+     "keywords": "vegetarian,vegan,veg,non veg,jain,halal,pure veg",
+     "answers": [
+      "Vegetarian food is very easy to find in India, and many places are marked 'pure veg'. If you follow dietary rules, ask clearly about the ingredients."
+     ]
+    },
+    {
+     "topic": "Spice level",
+     "keywords": "spicy,spice,hot food,chilli,less spicy,mild",
+     "answers": [
+      "Ask for 'less spicy' or 'mild' if you are not used to chilli. Curd, rice or bread can help cool the heat."
+     ]
+    },
+    {
+     "topic": "Food allergies",
+     "keywords": "allergy,allergic,nuts,peanut,dairy,gluten",
+     "answers": [
+      "If you have a food allergy, tell the restaurant clearly before ordering and carry any medicine your doctor prescribed. Nuts, dairy and spices appear in many dishes."
+     ]
+    },
+    {
+     "topic": "Bottled water",
+     "keywords": "bottled water,sealed,mineral water,filter water,tap water,ice",
+     "answers": [
+      "Drink sealed bottled water or properly filtered water, check that the seal is intact and be careful with ice in drinks."
+     ]
+    },
+    {
+     "topic": "Fruit and salads",
+     "keywords": "fruit,salad,raw,peel,juice",
+     "answers": [
+      "Prefer fruit you can peel yourself. Be careful with pre-cut fruit, raw salads and fresh juice if you are unsure about the water used."
+     ]
+    },
+    {
+     "topic": "Choosing a restaurant",
+     "keywords": "restaurant,dine,eat out,hygiene,clean,review",
+     "answers": [
+      "Pick restaurants that look clean and busy, read recent reviews and look at how the serving area is kept."
+     ]
+    },
+    {
+     "topic": "Upset stomach",
+     "keywords": "stomach,diarrhoea,diarrhea,vomit,food poisoning,ors",
+     "answers": [
+      "If you have an upset stomach, rest and drink plenty of safe fluids such as ORS. See a doctor if it lasts, if you have a fever, or if you cannot keep fluids down."
+     ]
+    },
+    {
+     "topic": "Local specialties",
+     "keywords": "specialty,specialties,local food,dish,thali,breakfast,idli,dosa,biryani",
+     "answers": [
+      "Trying regional specialties is a great way to enjoy a place. Ask locals or your hotel for popular, clean places and start with small portions."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "stay",
+   "icon": "🏨",
+   "title": "Hotels & Stay",
+   "tips": [
+    {
+     "topic": "Hotel Safety",
+     "keywords": "hotel,room,stay,lodging",
+     "answers": [
+      "Choose reputable accommodation, keep your room locked, and avoid sharing your room details with strangers."
+     ]
+    },
+    {
+     "topic": "Booking a stay",
+     "keywords": "hotel booking,book hotel,confirmation,advance payment,advance",
+     "answers": [
+      "Book through trusted platforms, read recent reviews and keep your confirmation handy. Be careful about paying large advances to unknown websites."
+     ]
+    },
+    {
+     "topic": "Hotel check-in",
+     "keywords": "check in hotel,id proof,registration,front desk",
+     "answers": [
+      "Hotels in India usually ask for ID at check-in. Carry your ID with a copy, and look at your room before you accept it."
+     ]
+    },
+    {
+     "topic": "Room safety",
+     "keywords": "room safe,room lock,door,chain,peephole,latch",
+     "answers": [
+      "Use the door chain or latch, keep valuables in the room safe, and do not open the door unless you know who is there."
+     ]
+    },
+    {
+     "topic": "Fire safety",
+     "keywords": "fire exit,stairs,evacuation,fire safety",
+     "answers": [
+      "Note the nearest fire exit and stairs when you arrive, and never use the lift during a fire."
+     ]
+    },
+    {
+     "topic": "Hostels and homestays",
+     "keywords": "hostel,homestay,dorm,guesthouse,guest house,airbnb",
+     "answers": [
+      "In hostels and homestays, use a locker for valuables, read reviews from other travellers and keep your passport and phone with you."
+     ]
+    },
+    {
+     "topic": "Checking out",
+     "keywords": "checkout,check out,late checkout,extra charge",
+     "answers": [
+      "Confirm the checkout time, check the final bill for extra charges and make sure you have all your belongings."
+     ]
+    },
+    {
+     "topic": "Noise and sleep",
+     "keywords": "noise,noisy,sleep,quiet,rest",
+     "answers": [
+      "Ask for a quieter room away from the road, and carry earplugs if you are a light sleeper."
+     ]
+    },
+    {
+     "topic": "Airport pickup",
+     "keywords": "hotel taxi,hotel pickup,airport pickup,pickup",
+     "answers": [
+      "Arrange airport pickups through your hotel or a trusted service so that someone is expecting you on arrival."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "health",
+   "icon": "🩺",
+   "title": "Health & Weather",
+   "tips": [
+    {
+     "topic": "Health",
+     "keywords": "health,sick,ill,doctor,medicine,மருத்துவமனை,மருத்துவர்,अस्पताल,डॉक्टर",
+     "answers": [
+      "If you feel unwell, rest and seek help from a qualified medical professional when needed."
+     ]
+    },
+    {
+     "topic": "Weather",
+     "keywords": "weather,rain,hot,heat,cold,temperature",
+     "answers": [
+      "Check the weather before travelling and carry suitable clothing, water, or rain protection."
+     ]
+    },
+    {
+     "topic": "Regular medicines",
+     "keywords": "medicine,medicines,prescription,tablet,pharmacy,chemist",
+     "answers": [
+      "Carry enough of your regular medicine in its original packaging with a doctor's note. Pharmacies are easy to find, but check expiry dates."
+     ]
+    },
+    {
+     "topic": "First aid kit",
+     "keywords": "first aid,bandage,plaster,antiseptic,kit",
+     "answers": [
+      "A small kit with plasters, antiseptic, pain relief and ORS covers common travel problems."
+     ]
+    },
+    {
+     "topic": "Heat and sun",
+     "keywords": "sunburn,sunscreen,heatstroke,dehydration,sun",
+     "answers": [
+      "Wear a hat and sunscreen, drink water often and rest in the shade during the hottest hours. Dizziness or confusion in the heat needs medical help."
+     ]
+    },
+    {
+     "topic": "Mosquitoes",
+     "keywords": "mosquito,mosquitoes,dengue,malaria,repellent,insect",
+     "answers": [
+      "Use repellent, wear long sleeves at dusk and sleep under a net or in a screened room to avoid mosquito bites."
+     ]
+    },
+    {
+     "topic": "Hospitals",
+     "keywords": "hospital,clinic,emergency room,nearest hospital,ambulance",
+     "answers": [
+      "For serious problems go to the nearest hospital emergency room, or call 112 or 108. Keep your insurance details with you."
+     ]
+    },
+    {
+     "topic": "Travel insurance",
+     "keywords": "insurance,cover,claim,medical insurance",
+     "answers": [
+      "Travel insurance that covers medical care, theft and delays gives peace of mind. Keep the policy number and helpline in your phone."
+     ]
+    },
+    {
+     "topic": "Hand hygiene",
+     "keywords": "sanitizer,sanitiser,wash hands,hygiene,germs",
+     "answers": [
+      "Wash your hands often and carry a sanitiser, especially before eating."
+     ]
+    },
+    {
+     "topic": "Travel sickness",
+     "keywords": "motion sickness,nausea,travel sick,car sick,sick bus",
+     "answers": [
+      "If you get travel sick, sit near the front or by a window, look at the horizon and ask a pharmacist for suitable remedies."
+     ]
+    },
+    {
+     "topic": "Monsoon travel",
+     "keywords": "monsoon,flood,umbrella,raincoat,wet",
+     "answers": [
+      "During the monsoon, carry rain protection, check weather alerts and avoid walking or driving through flooded roads."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "safety",
+   "icon": "🛡️",
+   "title": "Safety & Planning",
+   "tips": [
+    {
+     "topic": "Lost or Directions",
+     "keywords": "lost,direction,where,find,route",
+     "answers": [
+      "If you are lost, stay in a public place, check your map, and ask a trusted local or official for directions."
+     ]
+    },
+    {
+     "topic": "Night Safety",
+     "keywords": "night,dark,late,safe",
+     "answers": [
+      "At night, prefer well-lit public areas, use trusted transport, and keep a trusted person informed about your plans."
+     ]
+    },
+    {
+     "topic": "Emergency",
+     "keywords": "emergency,help,police,danger,112,உதவி,मदद,आपातकाल,बचाओ,காப்பாற்றுங்கள்",
+     "answers": [
+      "If you are facing an emergency in India, call 112 or seek help from nearby authorities or trusted people."
+     ]
+    },
+    {
+     "topic": "Evening Plan",
+     "keywords": "evening,plan,tonight,visit",
+     "answers": [
+      "For an evening outing, choose familiar public places, plan your transport in advance, and keep your phone charged."
+     ]
+    },
+    {
+     "topic": "Stranger Safety",
+     "keywords": "stranger,strangers,unknown,person",
+     "answers": [
+      "Avoid sharing unnecessary personal information with strangers and meet unfamiliar people only in public places."
+     ]
+    },
+    {
+     "topic": "Meeting Someone",
+     "keywords": "meeting,meet,meetup,appointment",
+     "answers": [
+      "If meeting someone you do not know well, choose a public location and let a trusted person know your plans."
+     ]
+    },
+    {
+     "topic": "Location Sharing",
+     "keywords": "location,share,sharing,gps",
+     "answers": [
+      "When appropriate, share your travel plans or live location with a trusted person."
+     ]
+    },
+    {
+     "topic": "Emergency Contact",
+     "keywords": "family,contact,contacts,relative",
+     "answers": [
+      "Keep important emergency contacts easily accessible and inform someone you trust about your travel plans."
+     ]
+    },
+    {
+     "topic": "Police Help",
+     "keywords": "police,station,cop,law,போலீஸ்,காவல்துறை,पुलिस",
+     "answers": [
+      "For safety concerns, seek assistance from official police or other authorized authorities."
+     ]
+    },
+    {
+     "topic": "Crowded Places",
+     "keywords": "crowd,crowded,festival,market",
+     "answers": [
+      "In crowded places, keep your phone and valuables secure and identify an easy meeting point if travelling with others."
+     ]
+    },
+    {
+     "topic": "Public Places",
+     "keywords": "public,park,mall,street",
+     "answers": [
+      "When travelling alone, prefer familiar and populated public areas, especially when you are unfamiliar with the location."
+     ]
+    },
+    {
+     "topic": "Travel Planning",
+     "keywords": "travel,trip,plan,planning",
+     "answers": [
+      "Before travelling, plan your route, accommodation, transport, important contacts, and basic emergency options."
+     ]
+    },
+    {
+     "topic": "Packing",
+     "keywords": "pack,packing,clothes,essentials",
+     "answers": [
+      "Pack identification, medication if prescribed, charging equipment, suitable clothing, and other essential items."
+     ]
+    },
+    {
+     "topic": "Check-in",
+     "keywords": "checkin,check-in,safe,update",
+     "answers": [
+      "Send a quick check-in message to someone you trust when you arrive at an important destination."
+     ]
+    },
+    {
+     "topic": "Emergency Preparation",
+     "keywords": "prepare,prepared,emergency kit,emergency preparation",
+     "answers": [
+      "Know the local emergency number, keep your phone charged, and know where to seek official help."
+     ]
+    },
+    {
+     "topic": "Solo Travel",
+     "keywords": "solo,alone,travelling alone,travel alone",
+     "answers": [
+      "When travelling alone, keep someone informed about your plans and choose familiar public locations when possible."
+     ]
+    },
+    {
+     "topic": "General Travel Safety",
+     "keywords": "safety,travel safety,travelling,safe travel",
+     "answers": [
+      "Stay aware of your surroundings, protect your belongings, keep communication available, and seek official help when necessary."
+     ]
+    },
+    {
+     "topic": "Women travellers",
+     "keywords": "woman,women,female,girl,ladies,women safety",
+     "answers": [
+      "Women travellers can stay safer by sharing their live location with a trusted person, using verified transport, avoiding empty places late at night and keeping the women's helpline 1091 handy."
+     ]
+    },
+    {
+     "topic": "Trust your instincts",
+     "keywords": "uncomfortable,unsafe,feel unsafe,suspicious",
+     "answers": [
+      "If something feels wrong, trust your instincts. Move to a busy, well-lit place, step into a shop or hotel and ask for help."
+     ]
+    },
+    {
+     "topic": "Asking for help",
+     "keywords": "ask for help,who to ask,trusted person,help from locals",
+     "answers": [
+      "Ask for help from uniformed staff, shop owners, hotel staff or families rather than from strangers who approach you first."
+     ]
+    },
+    {
+     "topic": "Separated from your group",
+     "keywords": "lost child,lost friend,separated,group,meeting point",
+     "answers": [
+      "If you get separated from your group, go to the agreed meeting point and call. Agree a meeting spot before visiting crowded places."
+     ]
+    },
+    {
+     "topic": "Weather warnings",
+     "keywords": "earthquake,cyclone,tsunami,storm,warning,alert",
+     "answers": [
+      "If there is a weather or disaster warning, follow official instructions, keep your phone charged and stay away from beaches and low-lying areas."
+     ]
+    },
+    {
+     "topic": "Beaches and swimming",
+     "keywords": "beach,swim,swimming,sea,lifeguard,current",
+     "answers": [
+      "Swim only at beaches with lifeguards, obey the warning flags, and never swim alone or after drinking."
+     ]
+    },
+    {
+     "topic": "Animals",
+     "keywords": "animal,monkey,dog,wildlife,safari,stray",
+     "answers": [
+      "Do not feed or tease monkeys or stray animals. Keep food out of sight and keep a safe distance."
+     ]
+    },
+    {
+     "topic": "Fire",
+     "keywords": "fire,smoke,burning,blaze",
+     "answers": [
+      "In a fire, leave immediately, stay low under smoke, do not use lifts, and call 101 or 112."
+     ]
+    },
+    {
+     "topic": "Trekking",
+     "keywords": "trek,trekking,hiking,trail,mountain,hill",
+     "answers": [
+      "Tell someone your trekking route, carry water and a charged phone, start early and turn back if the weather changes."
+     ]
+    },
+    {
+     "topic": "Tourist helpline",
+     "keywords": "tourist helpline,helpline,1363,ministry of tourism,tourist police",
+     "answers": [
+      "India's Ministry of Tourism runs a round-the-clock tourist helpline on 1363 (or 1800-11-1363). For any emergency dial 112. The Helplines screen in this app lists more numbers."
+     ]
+    },
+    {
+     "topic": "Important numbers",
+     "keywords": "emergency number,emergency numbers,helpline numbers,phone numbers,ambulance number,police number,fire number,women helpline,important numbers",
+     "answers": [
+      "Key numbers in India: 112 for any emergency, 100 police, 101 fire, 102 or 108 ambulance, 1091 women's helpline and 1363 tourist helpline. Numbers can vary by state, so 112 is always the safest to try."
+     ]
+    },
+    {
+     "topic": "Pickpockets and theft",
+     "keywords": "pickpocket,pickpockets,theft,thief,snatch,snatching,bag snatching",
+     "answers": [
+      "Keep your bag zipped and in front of you, avoid carrying everything in one place and stay alert in crowds. If something is stolen, report it at the nearest police station and block your cards."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "scams",
+   "icon": "🚨",
+   "title": "Scams & Fraud",
+   "tips": [
+    {
+     "topic": "Scam Awareness",
+     "keywords": "scam,fraud,cheat,scams,fraudulent",
+     "answers": [
+      "Be cautious of unexpected offers, requests for money, or people pressuring you to make quick decisions."
+     ]
+    },
+    {
+     "topic": "Personal Information",
+     "keywords": "personal,privacy,address,information",
+     "answers": [
+      "Avoid sharing sensitive personal information such as your home address, passwords, or financial details with strangers."
+     ]
+    },
+    {
+     "topic": "Online Safety",
+     "keywords": "online,internet,password,account,security",
+     "answers": [
+      "Avoid entering sensitive information on suspicious websites and use strong passwords for important accounts."
+     ]
+    },
+    {
+     "topic": "Taxi meter scam",
+     "keywords": "meter,broken meter,no meter,fare,overcharge taxi",
+     "answers": [
+      "If a driver says the meter is broken or asks for a very high fare, agree on a price first or use an app cab or prepaid taxi instead."
+     ]
+    },
+    {
+     "topic": "Fake guides",
+     "keywords": "guide,fake guide,tout,agent,commission",
+     "answers": [
+      "Hire guides through official counters or your hotel, ask to see their ID and agree the price before you start. Politely ignore touts who approach you."
+     ]
+    },
+    {
+     "topic": "Closed attraction trick",
+     "keywords": "closed,shut,closed today,diversion,detour",
+     "answers": [
+      "Be careful if someone says an attraction is closed and offers to take you somewhere else. Check the opening times at the official ticket counter or website."
+     ]
+    },
+    {
+     "topic": "Fake tickets",
+     "keywords": "ticket scam,fake ticket,black ticket,resale",
+     "answers": [
+      "Buy tickets only from official counters or websites, and check the date and details printed on them."
+     ]
+    },
+    {
+     "topic": "OTP and bank calls",
+     "keywords": "otp,bank call,kyc,pin,cvv,upi pin,fraud call",
+     "answers": [
+      "Never share your OTP, PIN or CVV with anyone, even if they say they are from your bank or the police."
+     ]
+    },
+    {
+     "topic": "Fake officials",
+     "keywords": "fake police,fake officer,fine,bribe,asked money",
+     "answers": [
+      "Real officials can show ID. If someone asks for cash on the spot, ask for an official receipt or go with them to the nearest police station."
+     ]
+    },
+    {
+     "topic": "Card skimming",
+     "keywords": "skimmer,card clone,clone,atm fraud",
+     "answers": [
+      "Check the ATM for loose parts or hidden cameras, cover the keypad when you type your PIN and use ATMs inside banks when you can."
+     ]
+    },
+    {
+     "topic": "Fake websites",
+     "keywords": "fake website,phishing,fake link,sms link,fake booking site",
+     "answers": [
+      "Check web addresses carefully, avoid links sent by strangers and book only through trusted official websites."
+     ]
+    },
+    {
+     "topic": "Gem and carpet shops",
+     "keywords": "gem,gems,carpet,jewel,export,emporium,commission shop",
+     "answers": [
+      "Be careful with offers to buy gems or goods 'to resell at home'. Never agree to buy high-value items under pressure."
+     ]
+    },
+    {
+     "topic": "Photo scams",
+     "keywords": "photo for money,snake charmer,monkey photo,pose",
+     "answers": [
+      "Some people may ask for money after you pose for a photo. Ask first and agree on the price before you take any pictures."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "culture",
+   "icon": "🛕",
+   "title": "Culture & Customs",
+   "tips": [
+    {
+     "topic": "Useful Phrases",
+     "keywords": "phrase,phrases,language,speak,tamil,hindi",
+     "answers": [
+      "Useful phrases include Hello, Thank you, Where is this place?, and Please help me."
+     ]
+    },
+    {
+     "topic": "Tourist Places",
+     "keywords": "tourist,attraction,sightseeing,place",
+     "answers": [
+      "Prefer established tourist locations and check opening hours and local guidelines before visiting."
+     ]
+    },
+    {
+     "topic": "Language Help",
+     "keywords": "language,translation,translate,communication",
+     "answers": [
+      "If there is a language barrier, use simple words, translation tools, or ask an official or trusted person for help."
+     ]
+    },
+    {
+     "topic": "Local Customs",
+     "keywords": "custom,culture,cultural,tradition",
+     "answers": [
+      "Respect local customs, dress expectations, public rules, and cultural practices while travelling."
+     ]
+    },
+    {
+     "topic": "Photography",
+     "keywords": "photo,photography,camera,picture",
+     "answers": [
+      "Respect privacy and local rules when taking photographs, especially around people, restricted locations, or official facilities."
+     ]
+    },
+    {
+     "topic": "Temple etiquette",
+     "keywords": "temple,mosque,gurdwara,church,shrine,religious place,worship",
+     "answers": [
+      "Dress modestly, remove your shoes before entering, follow the rules about photography and stay quiet and respectful. Some places require covering your head."
+     ]
+    },
+    {
+     "topic": "Greetings",
+     "keywords": "greet,greeting,namaste,vanakkam,respect,elders",
+     "answers": [
+      "Greet people with a smile and a 'namaste', or 'vanakkam' in Tamil Nadu. Show respect to elders."
+     ]
+    },
+    {
+     "topic": "Dress code",
+     "keywords": "dress,clothes,wear,modest,cover shoulders,shorts",
+     "answers": [
+      "Light cotton clothes that cover shoulders and knees are comfortable and respectful in most places."
+     ]
+    },
+    {
+     "topic": "Festivals",
+     "keywords": "festival,diwali,pongal,holi,eid,celebration,procession",
+     "answers": [
+      "Festivals are wonderful but crowded. Plan transport early, expect closures and road diversions, and keep valuables safe in crowds."
+     ]
+    },
+    {
+     "topic": "Eating customs",
+     "keywords": "eat hand,right hand,left hand,banana leaf,eating etiquette",
+     "answers": [
+      "In many places people eat with the right hand. Watch the locals and ask if you are unsure, and wash your hands before the meal."
+     ]
+    },
+    {
+     "topic": "Public behaviour",
+     "keywords": "affection,kiss,pda,public behaviour,drunk,alcohol,smoking",
+     "answers": [
+      "Keep public displays of affection modest, and check the local rules on alcohol and smoking because they differ between states."
+     ]
+    },
+    {
+     "topic": "Queues and manners",
+     "keywords": "queue,line,push,manners,cut line",
+     "answers": [
+      "Queues can be informal. Stay patient and polite, and ask 'is this the line for…?' if you are unsure."
+     ]
+    },
+    {
+     "topic": "Drones and restricted areas",
+     "keywords": "drone,restricted,military,airport photo,prohibited",
+     "answers": [
+      "Drones and photos near military sites, airports and some government buildings are restricted. Look for signs and ask the staff."
+     ]
+    },
+    {
+     "topic": "Heritage sites",
+     "keywords": "monument,fort,museum,heritage,entry fee,asi",
+     "answers": [
+      "Check opening days and entry fees, keep your ticket safe, do not touch carvings or paintings and never climb on monuments."
+     ]
+    },
+    {
+     "topic": "Learning local words",
+     "keywords": "learn tamil,learn hindi,language app,speak local",
+     "answers": [
+      "A few words of the local language go a long way. Try the Useful Phrases screen for Tamil and Hindi."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "connect",
+   "icon": "📱",
+   "title": "Phone, Internet & Documents",
+   "tips": [
+    {
+     "topic": "Documents",
+     "keywords": "passport,id,document,documents,license",
+     "answers": [
+      "Keep important identification documents secure and maintain a safe digital or physical backup when appropriate."
+     ]
+    },
+    {
+     "topic": "Phone Battery",
+     "keywords": "phone,battery,charge,charger",
+     "answers": [
+      "Keep your phone charged while travelling and consider carrying a reliable power bank."
+     ]
+    },
+    {
+     "topic": "Internet",
+     "keywords": "internet,wifi,sim,data,network",
+     "answers": [
+      "Use trusted Wi-Fi networks and make sure you have a reliable mobile data option for navigation and communication."
+     ]
+    },
+    {
+     "topic": "Navigation",
+     "keywords": "map,maps,navigation,directions,gps",
+     "answers": [
+      "Check your route before leaving and keep an offline or backup navigation option when possible."
+     ]
+    },
+    {
+     "topic": "Lost Phone",
+     "keywords": "phone lost,lost phone,missing phone,phone stolen,stolen phone",
+     "answers": [
+      "If you lose your phone, use available device-location tools, secure your accounts, and contact your service provider when necessary."
+     ]
+    },
+    {
+     "topic": "SIM card",
+     "keywords": "sim,tourist sim,sim card,esim,prepaid sim,data pack,recharge",
+     "answers": [
+      "Buying a local SIM usually needs ID and some time to activate. Buy from official stores of the mobile operators, not from street sellers."
+     ]
+    },
+    {
+     "topic": "Offline maps",
+     "keywords": "offline map,download map,google maps offline,no network",
+     "answers": [
+      "Download offline maps before you travel in case your signal drops."
+     ]
+    },
+    {
+     "topic": "Power adapters",
+     "keywords": "plug,adapter,socket,voltage,power adapter,charger type",
+     "answers": [
+      "India uses 230V and mostly round-pin sockets (types C, D and M), so a universal adapter is handy."
+     ]
+    },
+    {
+     "topic": "Digital copies",
+     "keywords": "scan,copy,backup,photo of passport,digilocker,cloud",
+     "answers": [
+      "Keep photos or scans of your passport, visa, tickets and insurance in a secure cloud folder, and keep one paper copy separate from the originals."
+     ]
+    },
+    {
+     "topic": "Translation apps",
+     "keywords": "translate app,translator,google translate,offline translation",
+     "answers": [
+      "Download translation languages for offline use before you travel."
+     ]
+    },
+    {
+     "topic": "Public charging",
+     "keywords": "charging station,usb charging,juice jacking,public charger",
+     "answers": [
+      "Use your own charger with a power outlet rather than public USB ports, which can be unsafe."
+     ]
+    },
+    {
+     "topic": "Useful travel apps",
+     "keywords": "travel app,useful apps,app list",
+     "answers": [
+      "Useful apps include maps, a cab app, a translation app, your bank app and the railway app."
+     ]
+    },
+    {
+     "topic": "Visa and passport",
+     "keywords": "visa,passport expiry,immigration,e visa,fro",
+     "answers": [
+      "Check that your passport is valid for your whole stay, carry your visa details and follow the registration rules for foreign visitors."
+     ]
+    }
+   ]
+  }
+ ]
+}

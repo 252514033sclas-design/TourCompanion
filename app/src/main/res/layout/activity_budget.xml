@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E8F8F6"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Budget Calculator"
+        android:textColor="#111827"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:text="Estimate your trip cost with a 10% safety buffer"
+        android:textColor="#64748B"
+        android:textSize="14sp" />
+    <EditText
+        android:id="@+id/budgetDays"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="16dp"
+        android:background="#FFFFFF"
+        android:hint="Number of days"
+        android:inputType="numberDecimal"
+        android:maxLines="1"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:textColor="#111827"
+        android:textColorHint="#94A3B8"
+        android:textSize="16sp" />
+    <EditText
+        android:id="@+id/budgetPeople"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:hint="Number of travellers"
+        android:inputType="numberDecimal"
+        android:maxLines="1"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:textColor="#111827"
+        android:textColorHint="#94A3B8"
+        android:textSize="16sp" />
+    <EditText
+        android:id="@+id/budgetStay"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:hint="Stay per night, whole group (₹)"
+        android:inputType="numberDecimal"
+        android:maxLines="1"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:textColor="#111827"
+        android:textColorHint="#94A3B8"
+        android:textSize="16sp" />
+    <EditText
+        android:id="@+id/budgetFood"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:hint="Food per person per day (₹)"
+        android:inputType="numberDecimal"
+        android:maxLines="1"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:textColor="#111827"
+        android:textColorHint="#94A3B8"
+        android:textSize="16sp" />
+    <EditText
+        android:id="@+id/budgetTransport"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:hint="Transport per person per day (₹)"
+        android:inputType="numberDecimal"
+        android:maxLines="1"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:textColor="#111827"
+        android:textColorHint="#94A3B8"
+        android:textSize="16sp" />
+    <EditText
+        android:id="@+id/budgetActivities"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:hint="Activities per person per day (₹)"
+        android:inputType="numberDecimal"
+        android:maxLines="1"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:textColor="#111827"
+        android:textColorHint="#94A3B8"
+        android:textSize="16sp" />
+    <EditText
+        android:id="@+id/budgetOther"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:hint="Other per person per day (₹)"
+        android:inputType="numberDecimal"
+        android:maxLines="1"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:textColor="#111827"
+        android:textColorHint="#94A3B8"
+        android:textSize="16sp" />
+    <Button
+        android:id="@+id/calcBudgetButton"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="14dp"
+        android:text="Calculate"
+        android:textSize="16sp"
+        android:backgroundTint="#0F766E"
+        android:textColor="#FFFFFF" />
+
+    <TextView
+        android:id="@+id/budgetResult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="#FFFFFF"
+        android:lineSpacingExtra="4dp"
+        android:padding="14dp"
+        android:textColor="#111827"
+        android:textSize="16sp" />
+    <Button
+        android:id="@+id/backBudgetButton"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="12dp"
+        android:text="← Back"
+        android:textSize="16sp" />
+
+    </LinearLayout>
+
+</ScrollView>

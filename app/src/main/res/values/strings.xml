@@ -1,3 +1,140 @@
 <resources>
     <string name="app_name">TourCompanion</string>
+
+    <!-- Chat -->
+    <string name="thinking">Thinking…</string>
+    <string name="type_question_first">Please type a question first.</string>
+    <string name="no_answer">I don\'t have an answer for that yet. Try asking about safety, transport, money, phrases, food, hotels or emergencies. In an emergency, call 112.</string>
+
+    <!-- Voice -->
+    <string name="mic_permission_needed">Microphone permission is required for voice questions.</string>
+    <string name="voice_unavailable">Voice input is not available on this device.</string>
+    <string name="voice_prompt">Ask me about your journey</string>
+    <string name="voice_is_off">Voice is turned off in Settings.</string>
+    <string name="voice_test_phrase">Hello! I am Semmozhi. If you can hear me, my voice is working.</string>
+    <string name="voice_engine_problem">The speech engine is not ready. Check the voice status above or install voice data.</string>
+    <string name="voice_install_unavailable">This phone cannot open voice data installation. Try the phone voice settings.</string>
+    <string name="voice_heard">I heard: %1$s</string>
+    <string name="voice_heard_nothing">I did not catch anything. Try again closer to the microphone.</string>
+    <string name="voice_language_missing">No %1$s voice is installed, so I will read the English spelling. Use Voice Check to install voice data.</string>
+
+    <!-- Emergency / contact -->
+    <string name="dialer_unavailable">Unable to open the phone dialer. Please dial 112 manually.</string>
+    <string name="sms_unavailable">No messaging app found on this phone.</string>
+    <string name="contact_saved">Contact saved on this phone.</string>
+    <string name="contact_invalid">Please enter a valid phone number.</string>
+    <string name="contact_none_saved">Save a contact first.</string>
+    <string name="contact_sms_button">💬 Send \"I\'m safe\" message</string>
+
+    <!-- Safety check-in -->
+    <string name="safe_marked">✓ You\'re marked as safe.\nWould you like to tell someone you trust?</string>
+    <string name="safe_spoken">I\'m glad you\'re okay!</string>
+    <string name="tell_someone">Tell someone I\'m safe</string>
+    <string name="safe_share_title">Share with…</string>
+    <string name="safe_share_message">I\'m safe. (Sent from TourCompanion)</string>
+
+    <!-- Home menu -->
+    <string name="menu_explore">Explore</string>
+    <string name="menu_tips">Travel Tips</string>
+    <string name="menu_tips_sub">Transport, money, food, stay, health and more</string>
+    <string name="menu_packing">Packing Checklist</string>
+    <string name="menu_packing_sub">Tick items off as you pack</string>
+    <string name="menu_budget">Budget Calculator</string>
+    <string name="menu_budget_sub">Estimate your trip cost</string>
+    <string name="menu_helplines">Helplines</string>
+    <string name="menu_helplines_sub">Police, ambulance, tourist and women helplines</string>
+    <string name="menu_contact">My Emergency Contact</string>
+    <string name="menu_contact_sub">Save someone you trust</string>
+    <string name="menu_voice">Voice Check</string>
+    <string name="menu_voice_sub">Test speaking and microphone</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_settings_sub">Voice and speed, saved data</string>
+    <string name="menu_about">About</string>
+    <string name="menu_about_sub">Version and safety notes</string>
+
+    <!-- Tips -->
+    <string name="tips_title">Travel Tips</string>
+    <string name="tips_subtitle">Choose a topic</string>
+    <string name="tips_count">%1$d tips</string>
+    <string name="tips_listen_hint">Tap Listen to hear Semmozhi read a tip</string>
+    <string name="nothing_here">Nothing here yet</string>
+    <string name="nothing_here_body">This topic could not be loaded.</string>
+
+    <!-- Phrases -->
+    <string name="phrases_title">Useful Phrases</string>
+    <string name="phrases_subtitle">Choose a language</string>
+    <string name="tamil_phrases">Tamil phrases</string>
+    <string name="hindi_phrases">Hindi phrases</string>
+    <string name="phrases_count">Everyday phrases with pronunciation and voice</string>
+    <string name="phrases_for">%1$s Phrases</string>
+    <string name="phrases_listen_hint">Tap Listen to hear the phrase</string>
+
+    <!-- Helplines, packing, budget, settings, about -->
+    <string name="helplines_title">Helplines</string>
+    <string name="helplines_subtitle">Tap a number to open the dialer. In danger, call 112.</string>
+    <string name="packing_title">Packing Checklist</string>
+    <string name="packing_progress">%1$d of %2$d packed</string>
+    <string name="budget_result">Trip cost: %1$s\nSafety buffer (10%%): %2$s\nTotal with buffer: %3$s\nPer person: %4$s\nPer day: %5$s</string>
+    <string name="settings_test_phrase">This is how I sound. I hope you like it!</string>
+    <string name="clear_title">Clear saved data?</string>
+    <string name="clear_message">This removes your saved contact, packing ticks and settings from this phone.</string>
+    <string name="clear_confirm">Clear</string>
+    <string name="clear_done">Saved data cleared.</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_body">Semmozhi is your friendly virtual travel companion. She answers travel questions offline, teaches Tamil and Hindi phrases, and helps you stay safe.\n\nThe tips are general guidance only and do not replace advice from local authorities, doctors or your embassy. Helpline numbers can vary by state. In any emergency, call 112.\n\nYour saved contact and settings stay on this phone.</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_explore">Explore</string>
+    <string name="nav_safety">Safety</string>
+    <string name="nav_profile">Profile</string>
+    <string name="panel_safety_title">Safety &amp; Help</string>
+    <string name="panel_profile_title">Profile</string>
+    <string name="menu_checkin">Safety Check-in</string>
+    <string name="menu_checkin_sub">Let someone know you are okay</string>
+    <string name="menu_emergency">Emergency 112</string>
+    <string name="menu_emergency_sub">Call for police, fire or ambulance</string>
+    <string name="menu_phrases">Useful Phrases</string>
+    <string name="menu_phrases_sub">Tamil and Hindi with voice</string>
+
+    <!-- Accounts -->
+    <string name="auth_title_login">Welcome back</string>
+    <string name="auth_title_register">Create your account</string>
+    <string name="auth_subtitle_login">Log in to keep your contact and checklist with you</string>
+    <string name="auth_subtitle_register">It takes a minute. Your data stays on this phone.</string>
+    <string name="auth_hint_name">Your name</string>
+    <string name="auth_hint_email">Email</string>
+    <string name="auth_hint_password">Password (8+ characters, letters and a number)</string>
+    <string name="auth_show_password">Show password</string>
+    <string name="auth_button_login">Log in</string>
+    <string name="auth_button_register">Create account</string>
+    <string name="auth_switch_to_register">New here? Create an account</string>
+    <string name="auth_switch_to_login">Already have an account? Log in</string>
+    <string name="auth_guest">Continue as guest</string>
+    <string name="auth_note">Emergency 112, helplines and travel tips work without an account.</string>
+    <string name="auth_error_name">Please enter your name (2 to 60 characters).</string>
+    <string name="auth_error_email">Please enter a valid email address.</string>
+    <string name="auth_error_password">Password needs at least 8 characters with a letter and a number.</string>
+    <string name="auth_error_email_taken">An account with this email already exists. Try logging in.</string>
+    <string name="auth_error_login">Incorrect email or password.</string>
+    <string name="auth_error_generic">Something went wrong. Please try again.</string>
+
+    <!-- Profile -->
+    <string name="profile_guest">Guest</string>
+    <string name="profile_guest_sub">Not logged in</string>
+    <string name="menu_login">Log in or create account</string>
+    <string name="menu_login_sub">Keep your data under your own account</string>
+    <string name="menu_logout">Log out</string>
+    <string name="menu_logout_sub">Your saved data stays safe for next time</string>
+    <string name="menu_delete">Delete account</string>
+    <string name="menu_delete_sub">Permanently remove your account and data</string>
+    <string name="logout_title">Log out?</string>
+    <string name="logout_message">You can log back in any time with your email and password.</string>
+    <string name="logout_confirm">Log out</string>
+    <string name="delete_title">Delete your account?</string>
+    <string name="delete_message">This permanently deletes your account and the contact, checklist and other data saved for it on this phone. It cannot be undone.\n\nEnter your password to confirm.</string>
+    <string name="delete_password_hint">Password</string>
+    <string name="delete_confirm">Delete</string>
+    <string name="delete_wrong_password">Wrong password. Your account was not deleted.</string>
+    <string name="delete_done">Your account and its data were deleted.</string>
 </resources>

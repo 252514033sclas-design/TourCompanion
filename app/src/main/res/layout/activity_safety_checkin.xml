@@ -66,6 +66,15 @@
         android:backgroundTint="#0F766E" />
 
     <Button
+        android:id="@+id/shareSafeButton"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/tell_someone"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <Button
         android:id="@+id/backHomeButton"
         android:layout_width="match_parent"
         android:layout_height="55dp"

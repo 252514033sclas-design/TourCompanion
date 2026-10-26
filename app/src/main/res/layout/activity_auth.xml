@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E8F8F6"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <com.example.tourcompanion.SaathiView
+            android:layout_width="match_parent"
+            android:layout_height="130dp" />
+
+        <TextView
+            android:id="@+id/authTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="#111827"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/authSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:textColor="#64748B"
+            android:textSize="14sp" />
+
+    <EditText
+        android:id="@+id/authName"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:hint="@string/auth_hint_name"
+        android:importantForAutofill="yes"
+        android:inputType="textPersonName"
+        android:maxLines="1"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:textColor="#111827"
+        android:textColorHint="#94A3B8"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <EditText
+        android:id="@+id/authEmail"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:hint="@string/auth_hint_email"
+        android:importantForAutofill="yes"
+        android:inputType="textEmailAddress"
+        android:maxLines="1"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:textColor="#111827"
+        android:textColorHint="#94A3B8"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/authPassword"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:hint="@string/auth_hint_password"
+        android:importantForAutofill="yes"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:textColor="#111827"
+        android:textColorHint="#94A3B8"
+        android:textSize="16sp" />
+
+        <CheckBox
+            android:id="@+id/authShowPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/auth_show_password"
+            android:textColor="#64748B" />
+
+        <TextView
+            android:id="@+id/authError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#E52525"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/authSubmitButton"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="#0F766E"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/authToggleButton"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#0F766E" />
+
+        <Button
+            android:id="@+id/authGuestButton"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="6dp"
+            android:text="@string/auth_guest"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:text="@string/auth_note"
+            android:textColor="#64748B"
+            android:textSize="12sp" />
+    </LinearLayout>
+</ScrollView>

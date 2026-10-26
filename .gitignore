@@ -13,3 +13,8 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+.env
+backend/node_modules
+*.jks
+*.keystore

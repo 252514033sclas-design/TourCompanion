@@ -1,0 +1,70 @@
+{
+ "groups": [
+  {
+   "title": "Documents",
+   "items": [
+    "Passport / photo ID",
+    "Visa or e-visa printout",
+    "Tickets and bookings (offline copy)",
+    "Travel insurance details",
+    "Copies of documents (paper + cloud)",
+    "Emergency contact list"
+   ]
+  },
+  {
+   "title": "Money",
+   "items": [
+    "Some cash in small notes",
+    "Debit / credit card",
+    "UPI or payment app set up",
+    "Bank helpline numbers noted",
+    "Spare card kept separately"
+   ]
+  },
+  {
+   "title": "Phone & electronics",
+   "items": [
+    "Phone and charger",
+    "Power bank",
+    "Universal adapter",
+    "Offline maps downloaded",
+    "Translation app downloaded",
+    "Earphones"
+   ]
+  },
+  {
+   "title": "Health",
+   "items": [
+    "Regular medicines + prescription",
+    "Small first aid kit",
+    "ORS sachets",
+    "Hand sanitiser",
+    "Sunscreen",
+    "Mosquito repellent",
+    "Reusable water bottle"
+   ]
+  },
+  {
+   "title": "Clothing",
+   "items": [
+    "Light cotton clothes",
+    "Modest outfit for temples",
+    "Comfortable walking shoes",
+    "Slippers / sandals (easy to remove)",
+    "Rain jacket or umbrella",
+    "Hat or cap"
+   ]
+  },
+  {
+   "title": "Extras",
+   "items": [
+    "Small day bag with zip",
+    "Lock for luggage",
+    "Tissues / wet wipes",
+    "Snacks",
+    "Pen",
+    "Notebook"
+   ]
+  }
+ ]
+}

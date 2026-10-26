@@ -1,28 +1,26 @@
 package com.example.tourcompanion
 
 import android.content.Intent
-import android.os.Bundle
-import android.widget.Button
-import androidx.appcompat.app.AppCompatActivity
 
-class UsefulPhrasesActivity : AppCompatActivity() {
+/** Phrase book hub: choose Tamil or Hindi. */
+class UsefulPhrasesActivity : ListScreenActivity() {
 
-    private lateinit var backPhrasesButton: Button
+    override fun screenTitle() = getString(R.string.phrases_title)
+    override fun screenSubtitle() = getString(R.string.phrases_subtitle)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        supportActionBar?.hide()
-        setContentView(R.layout.activity_useful_phrases)
-
-        backPhrasesButton = findViewById(R.id.backPhrasesButton)
-
-        backPhrasesButton.setOnClickListener {
-            val intent = Intent(
-                this,
-                MainActivity::class.java
-            )
-            startActivity(intent)
-            finish()
+    override fun buildContent() {
+        UiKit.addMenuRow(container, "த", getString(R.string.tamil_phrases), getString(R.string.phrases_count)) {
+            open("tamil")
         }
+        UiKit.addMenuRow(container, "हि", getString(R.string.hindi_phrases), getString(R.string.phrases_count)) {
+            open("hindi")
+        }
+    }
+
+    private fun open(language: String) {
+        startActivity(
+            Intent(this, PhrasesListActivity::class.java)
+                .putExtra(PhrasesListActivity.EXTRA_LANGUAGE, language)
+        )
     }
 }

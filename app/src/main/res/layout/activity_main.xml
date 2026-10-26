@@ -1,18 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#E8F8F6"
-    android:fillViewport="true">
+    android:orientation="vertical">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ScrollView
+            android:id="@+id/panelHome"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
 
         <!-- Character -->
         <com.google.android.material.card.MaterialCardView
@@ -161,106 +171,6 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Safety -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/safetyButton"
-            android:layout_width="match_parent"
-            android:layout_height="68dp"
-            android:layout_marginTop="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:cardBackgroundColor="#FFF3C4"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="1dp"
-            app:strokeColor="#FFD966"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
-                <TextView
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:gravity="center"
-                    android:text="🛡️"
-                    android:textSize="22sp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingStart="10dp"
-                    android:text="Safety Check-in"
-                    android:textColor="#A45112"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="25dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="›"
-                    android:textColor="#C97700"
-                    android:textSize="28sp" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Useful Phrases -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/usefulPhrasesButton"
-            android:layout_width="match_parent"
-            android:layout_height="68dp"
-            android:layout_marginTop="8dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:cardBackgroundColor="#FFFFFF"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="1dp"
-            app:strokeColor="#BFE3DF"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
-                <TextView
-                    android:layout_width="42dp"
-                    android:layout_height="42dp"
-                    android:gravity="center"
-                    android:text="🗣️"
-                    android:textSize="22sp" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingStart="10dp"
-                    android:text="Useful Phrases"
-                    android:textColor="#0F766E"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="25dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="›"
-                    android:textColor="#0F766E"
-                    android:textSize="28sp" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
         <!-- Emergency -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/emergencyButton"
@@ -324,6 +234,117 @@
             android:textColor="#64748B"
             android:textSize="11sp" />
 
-    </LinearLayout>
 
-</ScrollView>
+            </LinearLayout>
+        </ScrollView>
+
+        <ScrollView
+            android:id="@+id/panelExplore"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:paddingStart="4dp"
+                    android:text="@string/menu_explore"
+                    android:textColor="#0F766E"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/exploreContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <ScrollView
+            android:id="@+id/panelSafety"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:paddingStart="4dp"
+                    android:text="@string/panel_safety_title"
+                    android:textColor="#0F766E"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/safetyContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+        </ScrollView>
+
+        <ScrollView
+            android:id="@+id/panelProfile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:paddingStart="4dp"
+                    android:text="@string/panel_profile_title"
+                    android:textColor="#0F766E"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:id="@+id/profileContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+        </ScrollView>
+
+    </FrameLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:elevation="8dp"
+        app:itemIconTint="@color/nav_item_color"
+        app:itemTextColor="@color/nav_item_color"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_nav" />
+
+</LinearLayout>

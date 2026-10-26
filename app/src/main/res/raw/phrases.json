@@ -1,0 +1,284 @@
+{
+ "tamil": {
+  "title": "Tamil",
+  "tag": "ta-IN",
+  "phrases": [
+   {
+    "en": "Hello",
+    "native": "வணக்கம்",
+    "roman": "Vanakkam"
+   },
+   {
+    "en": "Thank you",
+    "native": "நன்றி",
+    "roman": "Nandri"
+   },
+   {
+    "en": "Please",
+    "native": "தயவுசெய்து",
+    "roman": "Dayavu seydhu"
+   },
+   {
+    "en": "Yes",
+    "native": "ஆமாம்",
+    "roman": "Aamaam"
+   },
+   {
+    "en": "No",
+    "native": "இல்லை",
+    "roman": "Illai"
+   },
+   {
+    "en": "Excuse me / Sorry",
+    "native": "மன்னிக்கவும்",
+    "roman": "Mannikkavum"
+   },
+   {
+    "en": "How much is this?",
+    "native": "இது எவ்வளவு?",
+    "roman": "Idhu evvalavu?"
+   },
+   {
+    "en": "Where is the bus stand?",
+    "native": "பேருந்து நிலையம் எங்கே?",
+    "roman": "Perundhu nilaiyam enge?"
+   },
+   {
+    "en": "Where is the railway station?",
+    "native": "ரயில் நிலையம் எங்கே?",
+    "roman": "Rayil nilaiyam enge?"
+   },
+   {
+    "en": "Where is the toilet?",
+    "native": "கழிவறை எங்கே?",
+    "roman": "Kazhivarai enge?"
+   },
+   {
+    "en": "I need help",
+    "native": "எனக்கு உதவி வேண்டும்",
+    "roman": "Enakku udhavi vendum"
+   },
+   {
+    "en": "I am lost",
+    "native": "நான் வழி தவறி விட்டேன்",
+    "roman": "Naan vazhi thavari vittaen"
+   },
+   {
+    "en": "I need a doctor",
+    "native": "எனக்கு மருத்துவர் தேவை",
+    "roman": "Enakku maruthuvar thevai"
+   },
+   {
+    "en": "Please call the police",
+    "native": "காவல்துறையை அழைக்கவும்",
+    "roman": "Kaavalthuraiyai azhaikkavum"
+   },
+   {
+    "en": "Water, please",
+    "native": "தண்ணீர் கொடுங்கள்",
+    "roman": "Thanneer kodungal"
+   },
+   {
+    "en": "Food",
+    "native": "சாப்பாடு",
+    "roman": "Saappaadu"
+   },
+   {
+    "en": "Hospital",
+    "native": "மருத்துவமனை",
+    "roman": "Maruthuvamanai"
+   },
+   {
+    "en": "Too expensive",
+    "native": "ரொம்ப விலை அதிகம்",
+    "roman": "Romba vilai adhigam"
+   },
+   {
+    "en": "I don't understand",
+    "native": "எனக்குப் புரியவில்லை",
+    "roman": "Enakku puriyavillai"
+   },
+   {
+    "en": "Do you speak English?",
+    "native": "நீங்கள் ஆங்கிலம் பேசுவீர்களா?",
+    "roman": "Neengal aangilam pesuveergala?"
+   },
+   {
+    "en": "Please speak slowly",
+    "native": "மெதுவாகப் பேசுங்கள்",
+    "roman": "Methuvaaga pesungal"
+   },
+   {
+    "en": "Left",
+    "native": "இடது",
+    "roman": "Idadhu"
+   },
+   {
+    "en": "Right",
+    "native": "வலது",
+    "roman": "Valadhu"
+   },
+   {
+    "en": "Straight",
+    "native": "நேராக",
+    "roman": "Neraaga"
+   },
+   {
+    "en": "Please stop here",
+    "native": "இங்கே நிறுத்துங்கள்",
+    "roman": "Inge niruthungal"
+   },
+   {
+    "en": "Good morning",
+    "native": "காலை வணக்கம்",
+    "roman": "Kaalai vanakkam"
+   },
+   {
+    "en": "Bill, please",
+    "native": "பில் கொடுங்கள்",
+    "roman": "Bill kodungal"
+   }
+  ]
+ },
+ "hindi": {
+  "title": "Hindi",
+  "tag": "hi-IN",
+  "phrases": [
+   {
+    "en": "Hello",
+    "native": "नमस्ते",
+    "roman": "Namaste"
+   },
+   {
+    "en": "Thank you",
+    "native": "धन्यवाद",
+    "roman": "Dhanyavaad"
+   },
+   {
+    "en": "Please",
+    "native": "कृपया",
+    "roman": "Kripya"
+   },
+   {
+    "en": "Yes",
+    "native": "हाँ",
+    "roman": "Haan"
+   },
+   {
+    "en": "No",
+    "native": "नहीं",
+    "roman": "Nahin"
+   },
+   {
+    "en": "Excuse me / Sorry",
+    "native": "माफ़ कीजिए",
+    "roman": "Maaf kijiye"
+   },
+   {
+    "en": "How much is this?",
+    "native": "यह कितने का है?",
+    "roman": "Yeh kitne ka hai?"
+   },
+   {
+    "en": "Where is the bus stand?",
+    "native": "बस अड्डा कहाँ है?",
+    "roman": "Bus adda kahaan hai?"
+   },
+   {
+    "en": "Where is the railway station?",
+    "native": "रेलवे स्टेशन कहाँ है?",
+    "roman": "Railway station kahaan hai?"
+   },
+   {
+    "en": "Where is the toilet?",
+    "native": "शौचालय कहाँ है?",
+    "roman": "Shauchalay kahaan hai?"
+   },
+   {
+    "en": "I need help",
+    "native": "मुझे मदद चाहिए",
+    "roman": "Mujhe madad chahiye"
+   },
+   {
+    "en": "I am lost",
+    "native": "मैं रास्ता भटक गया हूँ",
+    "roman": "Main raasta bhatak gaya hoon"
+   },
+   {
+    "en": "I need a doctor",
+    "native": "मुझे डॉक्टर चाहिए",
+    "roman": "Mujhe doctor chahiye"
+   },
+   {
+    "en": "Please call the police",
+    "native": "पुलिस को बुलाइए",
+    "roman": "Police ko bulaiye"
+   },
+   {
+    "en": "Water, please",
+    "native": "पानी दीजिए",
+    "roman": "Paani dijiye"
+   },
+   {
+    "en": "Food",
+    "native": "खाना",
+    "roman": "Khaana"
+   },
+   {
+    "en": "Hospital",
+    "native": "अस्पताल",
+    "roman": "Aspatal"
+   },
+   {
+    "en": "Too expensive",
+    "native": "बहुत महंगा है",
+    "roman": "Bahut mehenga hai"
+   },
+   {
+    "en": "I don't understand",
+    "native": "मुझे समझ नहीं आया",
+    "roman": "Mujhe samajh nahin aaya"
+   },
+   {
+    "en": "Do you speak English?",
+    "native": "क्या आप अंग्रेज़ी बोलते हैं?",
+    "roman": "Kya aap angrezi bolte hain?"
+   },
+   {
+    "en": "Please speak slowly",
+    "native": "धीरे बोलिए",
+    "roman": "Dheere boliye"
+   },
+   {
+    "en": "Left",
+    "native": "बाएँ",
+    "roman": "Baayen"
+   },
+   {
+    "en": "Right",
+    "native": "दाएँ",
+    "roman": "Daayen"
+   },
+   {
+    "en": "Straight",
+    "native": "सीधा",
+    "roman": "Seedha"
+   },
+   {
+    "en": "Please stop here",
+    "native": "यहाँ रुकिए",
+    "roman": "Yahaan rukiye"
+   },
+   {
+    "en": "Good morning",
+    "native": "सुप्रभात",
+    "roman": "Suprabhaat"
+   },
+   {
+    "en": "Bill, please",
+    "native": "बिल दीजिए",
+    "roman": "Bill dijiye"
+   }
+  ]
+ }
+}
