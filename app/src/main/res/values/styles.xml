@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Filled teal button: the main action on a screen -->
+    <style name="Widget.Tour.Button.Primary" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:minHeight">54dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="rippleColor">#33FFFFFF</item>
+    </style>
+
+    <style name="Widget.Tour.Button.Accent" parent="Widget.Tour.Button.Primary">
+        <item name="backgroundTint">@color/accent</item>
+        <item name="android:textColor">@color/text_primary</item>
+    </style>
+
+    <style name="Widget.Tour.Button.Danger" parent="Widget.Tour.Button.Primary">
+        <item name="backgroundTint">@color/danger</item>
+    </style>
+
+    <style name="Widget.Tour.Button.Success" parent="Widget.Tour.Button.Primary">
+        <item name="backgroundTint">@color/success</item>
+    </style>
+
+    <!-- Outlined button: secondary actions and "Back" -->
+    <style name="Widget.Tour.Button.Secondary" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeColor">@color/primary</item>
+        <item name="strokeWidth">1.5dp</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:minHeight">52dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <style name="Widget.Tour.Button.DangerOutline" parent="Widget.Tour.Button.Secondary">
+        <item name="strokeColor">@color/danger</item>
+        <item name="android:textColor">@color/danger</item>
+    </style>
+
+    <!-- Small pill, used for "Listen" -->
+    <style name="Widget.Tour.Button.Pill" parent="Widget.Tour.Button.Secondary">
+        <item name="cornerRadius">20dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:minHeight">40dp</item>
+    </style>
+
+    <!-- Round icon button (microphone, speaker) -->
+    <style name="Widget.Tour.Button.Round" parent="Widget.Tour.Button.Accent">
+        <item name="cornerRadius">26dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Widget.Tour.Button.Text" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/primary</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="Text.Tour.Title" parent="">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:fontFamily">sans-serif-black</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Text.Tour.Subtitle" parent="">
+        <item name="android:textColor">#E6FFFFFF</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="Widget.Tour.Input" parent="">
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorHint">#94A3B8</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:minHeight">54dp</item>
+        <item name="android:maxLines">1</item>
+    </style>
+</resources>

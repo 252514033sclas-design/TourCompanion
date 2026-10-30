@@ -10,5 +10,5 @@ object AppConfig {
      *
      * Expected contract:  POST {"question": "..."}  ->  {"answer": "..."}
      */
-    const val AI_PROXY_URL = ""
+    const val AI_PROXY_URL = "http://10.0.2.2/tourcompanion/api/ask.php"
 }
