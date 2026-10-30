@@ -1,108 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E8F8F6"
-    android:fillViewport="true">
+    android:background="@color/bg"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:tag="header"
+        android:background="@drawable/bg_header"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingStart="20dp"
+        android:paddingTop="18dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="26dp">
 
-    <com.example.tourcompanion.SaathiView
-        android:id="@+id/voiceAvatar"
-        android:layout_width="match_parent"
-        android:layout_height="150dp" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Voice Check"
-        android:textColor="#111827"
-        android:textSize="28sp"
-        android:textStyle="bold" />
+        <FrameLayout
+            android:layout_width="120dp"
+            android:layout_height="120dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:gravity="center"
-        android:text="Tests speaking and listening on this phone"
-        android:textColor="#64748B"
-        android:textSize="14sp" />
+            <View
+                android:layout_width="112dp"
+                android:layout_height="112dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_circle_soft" />
 
-    <TextView
-        android:id="@+id/voiceStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="#FFFFFF"
-        android:lineSpacingExtra="4dp"
-        android:padding="14dp"
-        android:textColor="#111827"
-        android:textSize="15sp" />
-    <Button
-        android:id="@+id/testSpeakButton"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginTop="12dp"
-        android:text="🔊 Test speaking"
-        android:textSize="16sp"
-        android:backgroundTint="#0F766E"
-        android:textColor="#FFFFFF" />
-    <Button
-        android:id="@+id/testMicButton"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginTop="10dp"
-        android:text="🎤 Test microphone"
-        android:textSize="16sp"
-        android:backgroundTint="#0F766E"
-        android:textColor="#FFFFFF" />
+            <com.example.tourcompanion.SaathiView
+                android:id="@+id/voiceAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
 
-    <TextView
-        android:id="@+id/heardText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:textColor="#0F766E"
-        android:textSize="15sp" />
-    <Button
-        android:id="@+id/voiceSettingsButton"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginTop="10dp"
-        android:text="Open phone voice settings"
-        android:textSize="16sp" />
-    <Button
-        android:id="@+id/installVoiceButton"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginTop="10dp"
-        android:text="Install voice data"
-        android:textSize="16sp" />
+        <TextView
+            
+            style="@style/Text.Tour.Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Voice Check" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:text="No sound? Check the media volume and that the phone is not on silent."
-        android:textColor="#64748B"
-        android:textSize="12sp" />
-    <Button
-        android:id="@+id/backVoiceButton"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginTop="8dp"
-        android:text="← Back"
-        android:textSize="16sp" />
-
+        <TextView
+            
+            style="@style/Text.Tour.Subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Tests speaking and listening on this phone" />
     </LinearLayout>
 
-</ScrollView>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="3dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+        <TextView
+            android:id="@+id/voiceStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:text=""
+            android:textColor="@color/text_primary"
+            android:textSize="15sp"
+            android:lineSpacingExtra="5dp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/testSpeakButton"
+            style="@style/Widget.Tour.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="14dp"
+            android:text="🔊  Test speaking" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/testMicButton"
+            style="@style/Widget.Tour.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="10dp"
+            android:text="🎤  Test microphone" />
+        <TextView
+            android:id="@+id/heardText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text=""
+            android:textColor="@color/primary"
+            android:textSize="15sp"
+            android:gravity="center" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/voiceSettingsButton"
+            style="@style/Widget.Tour.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="6dp"
+            android:text="Open phone voice settings" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/installVoiceButton"
+            style="@style/Widget.Tour.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="10dp"
+            android:text="Install voice data" />
+        <TextView
+            
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="No sound? Check the media volume and that the phone is not on silent."
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            android:gravity="center" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/backVoiceButton"
+        style="@style/Widget.Tour.Button.Text"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="← Back" />
+
+</LinearLayout>

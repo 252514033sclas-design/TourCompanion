@@ -11,6 +11,7 @@ class AboutActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         setContentView(R.layout.activity_about)
+        EdgeToEdge.apply(this)
 
         val version = try {
             packageManager.getPackageInfo(packageName, 0).versionName ?: "1.0"

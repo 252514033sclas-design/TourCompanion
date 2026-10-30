@@ -31,6 +31,7 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         setContentView(R.layout.activity_auth)
+        EdgeToEdge.apply(this)
 
         titleText = findViewById(R.id.authTitle)
         subtitle = findViewById(R.id.authSubtitle)

@@ -50,3 +50,9 @@ Small talk (hello, thanks, who are you...) is in `SmallTalk.kt`; distress words 
   removes the account and all data saved for it. Emergency 112, helplines and tips work without an account.
 - This database is local to the phone. Sign-in across phones needs a cloud backend (for example Firebase Authentication
   + Firestore), which needs your own project's `google-services.json`.
+
+## Design
+Teal + sunset-amber palette (`res/values/colors.xml`), light theme, gradient headers (`res/drawable/bg_hero.xml`,
+`bg_header*.xml`), rounded cards, colourful icon circles, Material button styles (`res/values/styles.xml`).
+Change the brand colour in one place: `colors.xml` (`primary`, `primary_dark`, `primary_light`) and the three gradient
+files. `EdgeToEdge.kt` keeps headers and the tab bar clear of the status bar and gesture bar on every screen.

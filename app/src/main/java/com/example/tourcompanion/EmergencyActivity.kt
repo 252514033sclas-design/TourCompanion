@@ -15,6 +15,7 @@ class EmergencyActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
         setContentView(R.layout.activity_emergency)
+        EdgeToEdge.apply(this)
 
         // ACTION_DIAL only opens the dialer with 112 filled in - no permission needed,
         // and the user presses call themselves.

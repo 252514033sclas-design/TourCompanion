@@ -20,6 +20,7 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+        EdgeToEdge.apply(this, lightNavigationBar = false)
 
         // Load the travel tips in the background while the splash is showing.
         val appContext = applicationContext

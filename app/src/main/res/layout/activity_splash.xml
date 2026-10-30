@@ -1,44 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E8F0FE">
+    android:background="@drawable/bg_splash"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="104dp"
+        android:layout_height="104dp"
+        android:background="@drawable/bg_circle_soft"
+        android:gravity="center"
+        android:text="🧭"
+        android:textSize="48sp" />
 
     <TextView
         android:id="@+id/tvAppName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
+        android:fontFamily="sans-serif-black"
         android:text="Semmozhi"
-        android:textColor="#374151"
-        android:textSize="40sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/tvTagline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        android:textColor="@color/white"
+        android:textSize="42sp" />
 
     <TextView
         android:id="@+id/tvTagline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="6dp"
         android:text="Your virtual travel companion"
-        android:textColor="#374151"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvAppName" />
+        android:textColor="#E6FFFFFF"
+        android:textSize="16sp" />
 
     <ProgressBar
         android:id="@+id/progressBar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="36dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTagline" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="40dp"
+        android:indeterminateTint="@color/white" />
+</LinearLayout>

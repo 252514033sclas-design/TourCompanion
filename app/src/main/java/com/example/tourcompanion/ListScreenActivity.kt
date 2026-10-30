@@ -30,6 +30,7 @@ abstract class ListScreenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         setContentView(R.layout.activity_screen_list)
+        EdgeToEdge.apply(this)
 
         container = findViewById(R.id.listContainer)
         avatar = findViewById(R.id.screenAvatar)

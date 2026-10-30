@@ -16,6 +16,7 @@ class MyContactActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         setContentView(R.layout.activity_my_contact)
+        EdgeToEdge.apply(this)
 
         nameInput = findViewById(R.id.contactName)
         phoneInput = findViewById(R.id.contactPhone)

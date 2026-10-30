@@ -16,6 +16,7 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         setContentView(R.layout.activity_settings)
+        EdgeToEdge.apply(this)
 
         speaker = Speaker(this, findViewById(R.id.settingsAvatar))
 

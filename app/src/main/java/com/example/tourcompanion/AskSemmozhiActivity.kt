@@ -25,6 +25,7 @@ class AskSemmozhiActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
         setContentView(R.layout.activity_ask_semmozhi)
+        EdgeToEdge.apply(this)
 
         questionInput = findViewById(R.id.askQuestionInput)
         askButton = findViewById(R.id.askSemmozhiButton)

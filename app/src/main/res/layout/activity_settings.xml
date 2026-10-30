@@ -1,100 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E8F8F6"
-    android:fillViewport="true">
+    android:background="@color/bg"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:tag="header"
+        android:background="@drawable/bg_header"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingStart="20dp"
+        android:paddingTop="18dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="26dp">
 
-    <com.example.tourcompanion.SaathiView
-        android:id="@+id/settingsAvatar"
-        android:layout_width="match_parent"
-        android:layout_height="130dp" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Settings"
-        android:textColor="#111827"
-        android:textSize="28sp"
-        android:textStyle="bold" />
+        <FrameLayout
+            android:layout_width="120dp"
+            android:layout_height="120dp">
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/voiceSwitch"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="14dp"
-        android:text="Semmozhi speaks answers aloud"
-        android:textColor="#111827"
-        android:textSize="16sp" />
+            <View
+                android:layout_width="112dp"
+                android:layout_height="112dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_circle_soft" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Speaking speed"
-        android:textColor="#0F766E"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+            <com.example.tourcompanion.SaathiView
+                android:id="@+id/settingsAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
 
-    <RadioGroup
-        android:id="@+id/rateGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/rateSlow"
-            android:layout_width="0dp"
+        <TextView
+            
+            style="@style/Text.Tour.Title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Slow" />
+            android:layout_marginTop="8dp"
+            android:text="Settings" />
 
-        <RadioButton
-            android:id="@+id/rateNormal"
-            android:layout_width="0dp"
+        <TextView
+            
+            style="@style/Text.Tour.Subtitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Normal" />
-
-        <RadioButton
-            android:id="@+id/rateFast"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Fast" />
-    </RadioGroup>
-    <Button
-        android:id="@+id/testVoiceButton"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginTop="10dp"
-        android:text="🔊 Test voice"
-        android:textSize="16sp"
-        android:backgroundTint="#0F766E"
-        android:textColor="#FFFFFF" />
-    <Button
-        android:id="@+id/clearDataButton"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginTop="10dp"
-        android:text="Clear my saved data"
-        android:textSize="16sp" />
-    <Button
-        android:id="@+id/backSettingsButton"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:layout_marginTop="8dp"
-        android:text="← Back"
-        android:textSize="16sp" />
-
+            android:layout_marginTop="2dp"
+            android:text="Voice and saved data" />
     </LinearLayout>
 
-</ScrollView>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="3dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/voiceSwitch"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Semmozhi speaks answers aloud"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="Speaking speed"
+                    android:textColor="@color/primary"
+                    android:textSize="15sp" />
+
+                <RadioGroup
+                    android:id="@+id/rateGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rateSlow"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:buttonTint="@color/primary"
+                        android:text="Slow" />
+
+                    <RadioButton
+                        android:id="@+id/rateNormal"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:buttonTint="@color/primary"
+                        android:text="Normal" />
+
+                    <RadioButton
+                        android:id="@+id/rateFast"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:buttonTint="@color/primary"
+                        android:text="Fast" />
+                </RadioGroup>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/testVoiceButton"
+            style="@style/Widget.Tour.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="14dp"
+            android:text="🔊  Test voice" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/clearDataButton"
+            style="@style/Widget.Tour.Button.DangerOutline"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="10dp"
+            android:text="Clear my saved data" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/backSettingsButton"
+        style="@style/Widget.Tour.Button.Text"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="← Back" />
+
+</LinearLayout>

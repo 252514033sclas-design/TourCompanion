@@ -52,6 +52,7 @@ class VoiceCheckActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         setContentView(R.layout.activity_voice_check)
+        EdgeToEdge.apply(this)
 
         statusText = findViewById(R.id.voiceStatus)
         heardText = findViewById(R.id.heardText)

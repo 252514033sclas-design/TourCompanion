@@ -21,6 +21,7 @@ class SafetyCheckInActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
         setContentView(R.layout.activity_safety_checkin)
+        EdgeToEdge.apply(this)
 
         safetyStatusText = findViewById(R.id.safetyStatusText)
         imSafeButton = findViewById(R.id.imSafeButton)

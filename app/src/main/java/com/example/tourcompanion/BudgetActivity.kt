@@ -13,6 +13,7 @@ class BudgetActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         setContentView(R.layout.activity_budget)
+        EdgeToEdge.apply(this)
 
         findViewById<Button>(R.id.calcBudgetButton).setOnClickListener { calculate() }
         findViewById<Button>(R.id.backBudgetButton).setOnClickListener { finish() }

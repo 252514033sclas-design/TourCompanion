@@ -137,4 +137,31 @@
     <string name="delete_confirm">Delete</string>
     <string name="delete_wrong_password">Wrong password. Your account was not deleted.</string>
     <string name="delete_done">Your account and its data were deleted.</string>
+
+    <!-- Home -->
+    <string name="home_greeting_guest">Vanakkam 👋</string>
+    <string name="home_greeting_named">Vanakkam, %1$s 👋</string>
+    <string name="home_hero_title">Where to next?</string>
+    <string name="home_input_hint">Ask Semmozhi anything…</string>
+    <string name="home_ask_button">Ask Semmozhi</string>
+    <string name="home_says_title">● Semmozhi says</string>
+    <string name="home_answer_hint">Ask me anything about your trip, or tap one of the ideas above.</string>
+    <string name="home_quick_title">Quick access</string>
+    <string name="home_emergency_sub">Tap for immediate help</string>
+    <string name="home_disclaimer">General guidance only. In danger, call 112.</string>
+    <string name="quick_tips">Tips</string>
+    <string name="quick_phrases">Phrases</string>
+    <string name="quick_packing">Packing</string>
+    <string name="quick_helplines">Helplines</string>
+    <string name="explore_subtitle">Everything for your journey</string>
+    <string name="safety_subtitle">Help is always one tap away</string>
+    <string name="profile_subtitle">Your account and settings</string>
+    <string-array name="suggestions">
+        <item>Is the tap water safe?</item>
+        <item>How do I get a taxi?</item>
+        <item>Where can I exchange money?</item>
+        <item>What should I wear in a temple?</item>
+        <item>Tourist helpline number</item>
+        <item>Is it safe at night?</item>
+    </string-array>
 </resources>

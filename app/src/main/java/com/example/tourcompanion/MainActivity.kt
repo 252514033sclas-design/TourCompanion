@@ -72,6 +72,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         setContentView(R.layout.activity_main)
+        EdgeToEdge.apply(this)
 
         saathiView = findViewById(R.id.saathiView)
         questionInput = findViewById(R.id.questionInput)
@@ -121,10 +122,48 @@ class MainActivity : AppCompatActivity() {
         }
 
         setUpTabs()
+        setUpHome()
     }
 
     // ---------------------------------------------------------
-    // Tabs: Home / Explore / Safety / More
+    // Home: greeting, quick tiles, suggestion chips
+    // ---------------------------------------------------------
+
+    private fun setUpHome() {
+        updateGreeting()
+
+        fun tile(id: Int, target: Class<*>) {
+            findViewById<View>(id).setOnClickListener { startActivity(Intent(this, target)) }
+        }
+        tile(R.id.quickTips, TipsHubActivity::class.java)
+        tile(R.id.quickPhrases, UsefulPhrasesActivity::class.java)
+        tile(R.id.quickPacking, PackingActivity::class.java)
+        tile(R.id.quickHelplines, HelplinesActivity::class.java)
+
+        val chips = findViewById<LinearLayout>(R.id.suggestionContainer)
+        for (suggestion in resources.getStringArray(R.array.suggestions)) {
+            val chip = LayoutInflater.from(this).inflate(R.layout.item_chip, chips, false) as TextView
+            chip.text = suggestion
+            chip.setOnClickListener {
+                questionInput.setText(suggestion)
+                answerQuestion(suggestion)
+            }
+            chips.addView(chip)
+        }
+    }
+
+    private fun updateGreeting() {
+        val greeting = findViewById<TextView>(R.id.greetingText)
+        val first = Session.userName(this).trim().substringBefore(' ')
+        greeting.text = if (Session.isLoggedIn(this) && first.isNotEmpty()) {
+            getString(R.string.home_greeting_named, first)
+        } else {
+            getString(R.string.home_greeting_guest)
+        }
+    }
+
+    // ---------------------------------------------------------
+    // Tabs: Home / Explore / Safety / Profile
     // ---------------------------------------------------------
 
     private fun setUpTabs() {
@@ -288,7 +327,10 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         // The user may have just logged in from the Profile tab.
-        if (::panelProfile.isInitialized) buildProfile()
+        if (::panelProfile.isInitialized) {
+            buildProfile()
+            updateGreeting()
+        }
     }
 
     private fun answerQuestion(question: String) {

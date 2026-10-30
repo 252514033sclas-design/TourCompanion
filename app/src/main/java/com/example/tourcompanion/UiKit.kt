@@ -1,14 +1,24 @@
 package com.example.tourcompanion
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.graphics.ColorUtils
 
 /** Builds the repeated cards and rows used by the list-style screens. */
 object UiKit {
+
+    /** Soft, friendly colours for the icon circles (the same title always gets the same colour). */
+    private val PALETTE = listOf(
+        "#0D9488", "#0284C7", "#7C3AED", "#D97706", "#059669", "#DB2777", "#4F46E5", "#EA580C"
+    )
+
+    private fun colorFor(text: String): Int =
+        Color.parseColor(PALETTE[Math.abs(text.hashCode()) % PALETTE.size])
 
     private fun dp(view: View, value: Int): Int =
         (value * view.resources.displayMetrics.density).toInt()
@@ -25,20 +35,22 @@ object UiKit {
         val iconView = row.findViewById<TextView>(R.id.rowIcon)
         iconView.text = icon
         if (icon.length > 2) {
-            // Short text badges such as "SOS" need a smaller, bold font to fit the icon box.
+            // Short text badges such as "SOS" need a smaller, bold font to fit the icon circle.
             iconView.textSize = 13f
             iconView.setTypeface(null, Typeface.BOLD)
         }
-        row.findViewById<TextView>(R.id.rowTitle).text = title
+
+        val titleView = row.findViewById<TextView>(R.id.rowTitle)
+        titleView.text = title
 
         val sub = row.findViewById<TextView>(R.id.rowSubtitle)
         if (subtitle.isNullOrBlank()) sub.visibility = View.GONE else sub.text = subtitle
 
-        if (accentColor != null) {
-            val color = Color.parseColor(accentColor)
-            row.findViewById<TextView>(R.id.rowIcon).setTextColor(color)
-            row.findViewById<TextView>(R.id.rowTitle).setTextColor(color)
-        }
+        // A coloured circle with a soft tint behind the icon; red titles for dangerous actions.
+        val color = if (accentColor != null) Color.parseColor(accentColor) else colorFor(title)
+        iconView.setTextColor(color)
+        iconView.backgroundTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 40))
+        if (accentColor != null) titleView.setTextColor(color)
 
         row.setOnClickListener { onClick() }
         container.addView(row)
@@ -69,11 +81,12 @@ object UiKit {
 
     fun addSectionHeader(container: LinearLayout, text: String) {
         val header = TextView(container.context)
-        header.text = text
-        header.textSize = 18f
-        header.setTypeface(null, Typeface.BOLD)
+        header.text = text.uppercase()
+        header.textSize = 13f
+        header.letterSpacing = 0.08f
+        header.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL))
         header.setTextColor(Color.parseColor("#0F766E"))
-        header.setPadding(dp(container, 4), dp(container, 14), 0, dp(container, 4))
+        header.setPadding(dp(container, 6), dp(container, 18), 0, dp(container, 4))
         container.addView(
             header,
             LinearLayout.LayoutParams(

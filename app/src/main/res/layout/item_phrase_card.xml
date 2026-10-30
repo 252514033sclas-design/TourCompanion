@@ -4,49 +4,62 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    app:cardBackgroundColor="#FFFFFF"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="2dp">
+    android:layout_marginTop="12dp"
+    app:cardBackgroundColor="@color/surface"
+    app:cardCornerRadius="22dp"
+    app:cardElevation="3dp"
+    app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:padding="16dp">
 
-        <TextView
-            android:id="@+id/phraseEnglish"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="#64748B"
-            android:textSize="14sp" />
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/phraseNative"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="#111827"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/phraseEnglish"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/phraseRoman"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textColor="#0F766E"
-            android:textSize="16sp"
-            android:textStyle="italic" />
+            <TextView
+                android:id="@+id/phraseNative"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/text_primary"
+                android:textSize="24sp" />
 
-        <Button
+            <TextView
+                android:id="@+id/phraseRoman"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_pill_tint"
+                android:paddingStart="10dp"
+                android:paddingTop="3dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="3dp"
+                android:textColor="@color/primary"
+                android:textSize="15sp"
+                android:textStyle="italic" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/phraseListen"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="🔊 Listen"
-            android:textColor="#0F766E" />
+            style="@style/Widget.Tour.Button.Round"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="12dp"
+            android:text="🔊" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
