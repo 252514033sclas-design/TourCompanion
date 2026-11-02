@@ -46,6 +46,47 @@ class TravelDatabaseHelper(context: Context) :
         onCreate(db)
     }
 
+    /**
+     * Synchronizes tips from MySQL backend into the local SQLite database.
+     * Updates existing topics or inserts new ones, preventing duplicate records.
+     */
+    fun syncRemoteTips(remoteTips: List<TravelTipSync>): Int {
+        if (remoteTips.isEmpty()) return 0
+        val db = writableDatabase
+        var syncedCount = 0
+        db.beginTransaction()
+        try {
+            for (tip in remoteTips) {
+                val cleanTopic = tip.topic.trim()
+                if (cleanTopic.isEmpty()) continue
+
+                val cursor = db.rawQuery(
+                    "SELECT id FROM travel_tips WHERE LOWER(topic) = LOWER(?) LIMIT 1",
+                    arrayOf(cleanTopic)
+                )
+                val exists = cursor.use { it.moveToFirst() }
+
+                val values = ContentValues().apply {
+                    put("topic", cleanTopic)
+                    put("keywords", tip.keywords.trim())
+                    put("answer", tip.answer.trim())
+                }
+
+                if (exists) {
+                    db.update("travel_tips", values, "LOWER(topic) = LOWER(?)", arrayOf(cleanTopic))
+                } else {
+                    values.put("category", "general")
+                    db.insert("travel_tips", null, values)
+                }
+                syncedCount++
+            }
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
+        return syncedCount
+    }
+
     companion object {
         const val DATABASE_VERSION = 5
 

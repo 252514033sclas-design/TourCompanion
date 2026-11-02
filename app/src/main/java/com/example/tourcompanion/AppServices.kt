@@ -11,6 +11,9 @@ object AppServices {
     @Volatile
     private var users: UserRepository? = null
 
+    @Volatile
+    private var travelTips: TravelTipsRepository? = null
+
     fun userRepository(context: Context): UserRepository =
         users ?: synchronized(this) {
             users ?: UserRepository(context.applicationContext).also { users = it }
@@ -19,5 +22,10 @@ object AppServices {
     fun queryProcessor(context: Context): QueryProcessor =
         processor ?: synchronized(this) {
             processor ?: QueryProcessor(context.applicationContext).also { processor = it }
+        }
+
+    fun travelTipsRepository(context: Context): TravelTipsRepository =
+        travelTips ?: synchronized(this) {
+            travelTips ?: TravelTipsRepository(context.applicationContext).also { travelTips = it }
         }
 }

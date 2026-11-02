@@ -23,6 +23,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -203,6 +204,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            AppServices.travelTipsRepository(applicationContext).syncTips()
+        }
     }
 
     private fun row(
@@ -223,6 +228,9 @@ class MainActivity : AppCompatActivity() {
         panelExplore.visibility = if (itemId == R.id.nav_explore) View.VISIBLE else View.GONE
         panelSafety.visibility = if (itemId == R.id.nav_safety) View.VISIBLE else View.GONE
         panelProfile.visibility = if (itemId == R.id.nav_profile) View.VISIBLE else View.GONE
+        if (itemId == R.id.nav_profile) {
+            buildProfile()
+        }
     }
 
     // ---------------------------------------------------------
@@ -236,10 +244,43 @@ class MainActivity : AppCompatActivity() {
         val loggedIn = Session.isLoggedIn(this)
 
         val header = LayoutInflater.from(this).inflate(R.layout.item_profile_header, container, false)
-        header.findViewById<TextView>(R.id.profileName).text =
-            if (loggedIn) Session.userName(this) else getString(R.string.profile_guest)
-        header.findViewById<TextView>(R.id.profileEmail).text =
-            if (loggedIn) Session.userEmail(this) else getString(R.string.profile_guest_sub)
+        val nameView = header.findViewById<TextView>(R.id.profileName)
+        val emailView = header.findViewById<TextView>(R.id.profileEmail)
+        val languageView = header.findViewById<TextView>(R.id.profileLanguage)
+        val joinedView = header.findViewById<TextView>(R.id.profileJoined)
+
+        nameView.text = if (loggedIn) Session.userName(this) else getString(R.string.profile_guest)
+        emailView.text = if (loggedIn) Session.userEmail(this) else getString(R.string.profile_guest_sub)
+
+        if (loggedIn) {
+            val cachedLang = Session.userLanguage(this)
+            if (cachedLang.isNotBlank()) {
+                languageView.visibility = View.VISIBLE
+                languageView.text = "Language: $cachedLang"
+            }
+            val cachedJoined = Session.userCreatedAt(this)
+            if (cachedJoined.isNotBlank()) {
+                joinedView.visibility = View.VISIBLE
+                joinedView.text = "Joined: $cachedJoined"
+            }
+
+            val userId = Session.userId(this)
+            lifecycleScope.launch {
+                val profile = AppServices.userRepository(applicationContext).getProfile(userId)
+                if (profile != null) {
+                    Session.updateProfile(this@MainActivity, profile)
+                    nameView.text = profile.name
+                    emailView.text = profile.email
+                    languageView.visibility = View.VISIBLE
+                    languageView.text = "Language: ${profile.language}"
+                    if (profile.createdAt.isNotBlank()) {
+                        joinedView.visibility = View.VISIBLE
+                        joinedView.text = "Joined: ${profile.createdAt}"
+                    }
+                }
+            }
+        }
+
         container.addView(header)
 
         row(container, "🎙️", R.string.menu_voice, R.string.menu_voice_sub, VoiceCheckActivity::class.java)

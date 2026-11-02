@@ -3,7 +3,7 @@ package com.example.tourcompanion
 import android.content.Context
 
 /**
- * Loads the travel tips from the database once and answers questions with TipMatcher.
+ * Loads the travel tips from the SQLite database and answers questions with TipMatcher.
  * Public API unchanged: processQuery(question): TravelTip?
  *
  * Call warmUp() from a background thread (the splash screen does) so the first
@@ -13,13 +13,26 @@ class QueryProcessor(context: Context) {
 
     private val appContext = context.applicationContext
 
-    private val matcher: TipMatcher by lazy { TipMatcher(loadTips(), TravelDatabaseHelper.ANSWER_SEP) }
+    @Volatile
+    private var matcher: TipMatcher? = null
 
-    fun warmUp() {
-        check(matcher.size > 0) { "travel_tips table is empty" }
+    private fun getMatcher(): TipMatcher {
+        return matcher ?: synchronized(this) {
+            matcher ?: TipMatcher(loadTips(), TravelDatabaseHelper.ANSWER_SEP).also { matcher = it }
+        }
     }
 
-    fun processQuery(question: String): TravelTip? = matcher.match(question)
+    fun warmUp() {
+        check(getMatcher().size > 0) { "travel_tips table is empty" }
+    }
+
+    fun reload() {
+        synchronized(this) {
+            matcher = TipMatcher(loadTips(), TravelDatabaseHelper.ANSWER_SEP)
+        }
+    }
+
+    fun processQuery(question: String): TravelTip? = getMatcher().match(question)
 
     private fun loadTips(): List<TravelTip> {
 
