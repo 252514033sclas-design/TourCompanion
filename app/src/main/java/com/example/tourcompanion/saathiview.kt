@@ -5,8 +5,11 @@ import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RadialGradient
 import android.graphics.RectF
+import android.graphics.Shader
 import android.os.SystemClock
 import android.util.AttributeSet
 import android.view.View
@@ -24,6 +27,7 @@ import kotlin.math.sin
  *
  * Public API:
  * - setState(State.IDLE / LISTENING / THINKING / SPEAKING)
+ * - setEmergencyMood(active: Boolean)   ← Phase 3A
  * - state
  * - setSpeaking(true/false) (preserved for backward compatibility)
  * - isSpeaking
@@ -84,6 +88,24 @@ class SaathiView @JvmOverloads constructor(
             // Ensure THINKING or LISTENING returns to IDLE when Speaker.stop() is called
             setState(State.IDLE)
         }
+    }
+
+    // ---------------------------------------------------------
+    // Phase 3A: Emergency Mood
+    // ---------------------------------------------------------
+
+    @Volatile
+    private var emergencyMood = false
+
+    /**
+     * Activates or deactivates the emergency aura (pulsing red).
+     * Call setEmergencyMood(true) from EmergencyActivity or SafetyCheckInActivity
+     * when the user is in distress. Call setEmergencyMood(false) when returning to normal.
+     */
+    fun setEmergencyMood(active: Boolean) {
+        if (emergencyMood == active) return
+        emergencyMood = active
+        postInvalidateOnAnimation()
     }
 
     // ---------------------------------------------------------
@@ -186,6 +208,14 @@ class SaathiView @JvmOverloads constructor(
     private var poseScale = 1f
 
     // ---------------------------------------------------------
+    // Phase 3A: Aura animation state
+    // ---------------------------------------------------------
+
+    // Smoothed aura alpha and radius fraction (interpolated each frame)
+    private var auraAlpha = 0f
+    private var auraRadius = 0.5f
+
+    // ---------------------------------------------------------
     // Drawing objects
     // ---------------------------------------------------------
 
@@ -196,8 +226,9 @@ class SaathiView @JvmOverloads constructor(
                     Paint.DITHER_FLAG
         )
 
-    private val destination =
-        RectF()
+    private val auraPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+    private val destination = RectF()
 
     // ---------------------------------------------------------
     // View size
@@ -228,6 +259,7 @@ class SaathiView @JvmOverloads constructor(
 
     override fun onDetachedFromWindow() {
         currentState = State.IDLE
+        emergencyMood = false
         patternIndex = 0
         nextSwitch = 0L
         rangeCallbacksReceived = 0
@@ -240,6 +272,8 @@ class SaathiView @JvmOverloads constructor(
         bob = 0f
         tilt = 0f
         poseScale = 1f
+        auraAlpha = 0f
+        auraRadius = 0.5f
         super.onDetachedFromWindow()
     }
 
@@ -252,6 +286,13 @@ class SaathiView @JvmOverloads constructor(
 
         val now = SystemClock.uptimeMillis()
         update(now)
+
+        // -------------------------------------------------
+        // Phase 3A: Draw aura behind the character
+        // -------------------------------------------------
+        if (width > 0 && height > 0 && auraAlpha > 0.005f) {
+            drawAura(canvas, now)
+        }
 
         val currentBitmap =
             bitmaps[currentMouth]
@@ -324,9 +365,13 @@ class SaathiView @JvmOverloads constructor(
         val idleSettling =
             currentState == State.IDLE && (now - stateEnteredAt) < IDLE_SETTLE_MS
 
+        // Keep animating if the aura still has visible alpha or if in an active state
+        val auraActive = currentState != State.IDLE || emergencyMood || auraAlpha > 0.005f
+
         if (
             currentState != State.IDLE ||
             idleSettling ||
+            auraActive ||
             fade < 1f ||
             abs(bob) > 0.0004f ||
             abs(tilt) > 0.02f ||
@@ -337,8 +382,35 @@ class SaathiView @JvmOverloads constructor(
     }
 
     // ---------------------------------------------------------
+    // Phase 3A: Aura drawing
+    // ---------------------------------------------------------
+
+    private fun drawAura(canvas: Canvas, now: Long) {
+        val cx = width / 2f
+        val cy = height / 2f
+        val maxR = min(width, height) * auraRadius
+
+        // Build radial gradient: color center → transparent edge
+        val gradient = RadialGradient(
+            cx, cy, maxR,
+            intArrayOf(
+                Color.argb((auraAlpha * 255f).toInt(), auraCenterR, auraCenterG, auraCenterB),
+                Color.argb(0, auraCenterR, auraCenterG, auraCenterB)
+            ),
+            floatArrayOf(0f, 1f),
+            Shader.TileMode.CLAMP
+        )
+        auraPaint.shader = gradient
+        canvas.drawCircle(cx, cy, maxR, auraPaint)
+    }
+
+    // ---------------------------------------------------------
     // Update animation
     // ---------------------------------------------------------
+
+    private var auraCenterR = 27
+    private var auraCenterG = 184
+    private var auraCenterB = 161  // teal by default
 
     private fun update(now: Long) {
         var target = currentMouth
@@ -445,6 +517,77 @@ class SaathiView @JvmOverloads constructor(
         bob += (targetBob - bob) * 0.20f
         tilt += (targetTilt - tilt) * 0.15f
         poseScale += (targetScale - poseScale) * 0.18f
+
+        // -----------------------------------------------------
+        // Phase 3A: Update aura alpha and radius
+        // Emergency mood overrides all state colors with pulsing red.
+        // -----------------------------------------------------
+        updateAura(now)
+    }
+
+    private fun updateAura(now: Long) {
+        val time = now.toDouble()
+
+        // Target aura parameters vary by state and emergency mood
+        val targetAlpha: Float
+        val targetRadius: Float
+
+        if (emergencyMood) {
+            // Emergency: pulsing red aura, moderate alpha, faster pulse
+            val pulse = ((sin(time / 320.0) + 1.0) / 2.0).toFloat()  // 0..1
+            targetAlpha = 0.13f + pulse * 0.08f   // 0.13..0.21
+            targetRadius = 0.52f + pulse * 0.04f  // 0.52..0.56
+            auraCenterR = 220
+            auraCenterG = 38
+            auraCenterB = 38   // danger red #DC2626
+        } else {
+            // Normal states: calm teal palette
+            auraCenterR = 27
+            auraCenterG = 184
+            auraCenterB = 161   // primary_light teal #1BB8A1
+
+            when (currentState) {
+                State.IDLE -> {
+                    val elapsedInState = now - stateEnteredAt
+                    if (elapsedInState < IDLE_SETTLE_MS) {
+                        // Brief settling glow fades out gracefully
+                        val envelope = 1f - (elapsedInState.toFloat() / IDLE_SETTLE_MS)
+                        val pulse = ((sin(time / 1800.0) + 1.0) / 2.0).toFloat()
+                        targetAlpha = (0.04f + pulse * 0.02f) * envelope
+                        targetRadius = 0.46f + pulse * 0.02f * envelope
+                    } else {
+                        // Fully settled: aura OFF (0% CPU)
+                        targetAlpha = 0f
+                        targetRadius = 0.46f
+                    }
+                }
+
+                State.LISTENING -> {
+                    // Slightly brighter, steady glow — Semmozhi is alert
+                    val pulse = ((sin(time / 900.0) + 1.0) / 2.0).toFloat()
+                    targetAlpha = 0.10f + pulse * 0.04f   // 0.10..0.14
+                    targetRadius = 0.50f + pulse * 0.02f  // 0.50..0.52
+                }
+
+                State.THINKING -> {
+                    // Gentle animated pulse — processing
+                    val pulse = ((sin(time / 600.0) + 1.0) / 2.0).toFloat()
+                    targetAlpha = 0.09f + pulse * 0.06f   // 0.09..0.15
+                    targetRadius = 0.48f + pulse * 0.03f  // 0.48..0.51
+                }
+
+                State.SPEAKING -> {
+                    // Slightly stronger, loose speech pulse — not phoneme-exact
+                    val pulse = ((sin(time / 380.0) + 1.0) / 2.0).toFloat()
+                    targetAlpha = 0.11f + pulse * 0.07f   // 0.11..0.18
+                    targetRadius = 0.50f + pulse * 0.04f  // 0.50..0.54
+                }
+            }
+        }
+
+        // Smooth interpolation so transitions are soft, never jerky
+        auraAlpha += (targetAlpha - auraAlpha) * AURA_LERP
+        auraRadius += (targetRadius - auraRadius) * AURA_LERP
     }
 
     // ---------------------------------------------------------
@@ -455,6 +598,7 @@ class SaathiView @JvmOverloads constructor(
         const val DEFAULT_DP = 240f
         const val FADE_MS = 70f
         const val IDLE_SETTLE_MS = 2800L
+        const val AURA_LERP = 0.06f   // smooth cross-fade speed for aura transitions
 
         @Volatile
         private var sharedBitmaps: Map<Mouth, Bitmap?>? = null

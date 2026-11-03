@@ -129,6 +129,8 @@ class SafetyCheckInActivity : AppCompatActivity() {
             safetyStatusText.text = "✓ Status: Safe\nChecked in $timeDisplay\n$syncNote"
             shareSafeButton.text = getString(R.string.tell_someone)
             shareSafeButton.visibility = View.VISIBLE
+            // Phase 3A: reflect saved status in aura (safe → no emergency aura)
+            saathiView.setEmergencyMood(false)
         } else if (result.status == "need_help") {
             val syncNote = when {
                 result.isGuest -> "(Guest Mode - Local)"
@@ -139,6 +141,8 @@ class SafetyCheckInActivity : AppCompatActivity() {
             safetyStatusText.text = "⚠️ Status: Need Help\nRequested $timeDisplay\n$syncNote"
             shareSafeButton.text = "⚠️ Alert Emergency Contact"
             shareSafeButton.visibility = View.VISIBLE
+            // Phase 3A: reflect saved status in aura (need_help → pulsing red emergency aura)
+            saathiView.setEmergencyMood(true)
         }
     }
 
@@ -161,6 +165,8 @@ class SafetyCheckInActivity : AppCompatActivity() {
                     safetyStatusText.text = "✓ Marked Safe\n$syncNote\nWould you like to tell someone you trust?"
                     shareSafeButton.text = getString(R.string.tell_someone)
                     shareSafeButton.visibility = View.VISIBLE
+                    // Phase 3A: deactivate emergency aura when user marks themselves safe
+                    saathiView.setEmergencyMood(false)
                     speaker.speak(getString(R.string.safe_spoken))
                 } else {
                     val syncNote = when {
@@ -171,6 +177,8 @@ class SafetyCheckInActivity : AppCompatActivity() {
                     safetyStatusText.text = "⚠️ Need Help Recorded\n$syncNote\nPlease contact emergency services or a trusted contact."
                     shareSafeButton.text = "⚠️ Alert Emergency Contact"
                     shareSafeButton.visibility = View.VISIBLE
+                    // Phase 3A: activate emergency aura (pulsing red) when user needs help
+                    saathiView.setEmergencyMood(true)
                     speaker.speak("Help requested. Please reach out to your emergency contact or authorities.")
                 }
             } finally {
@@ -182,6 +190,8 @@ class SafetyCheckInActivity : AppCompatActivity() {
 
     override fun onStop() {
         speaker.stop()
+        // Phase 3A: clear emergency aura when screen is no longer visible
+        saathiView.setEmergencyMood(false)
         super.onStop()
     }
 
