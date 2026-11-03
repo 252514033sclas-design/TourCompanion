@@ -8,8 +8,9 @@ import android.speech.tts.UtteranceProgressListener
 import java.util.Locale
 
 /**
- * Wraps TextToSpeech and drives the SaathiView mouth from the real speech events.
- * Respects the Settings screen (voice on/off, speed) and can speak other languages.
+ * Wraps TextToSpeech and drives the SaathiView mouth from real speech events.
+ * Integrates onRangeStart() to provide text-driven viseme lip-sync while preserving
+ * fallback animation when range events are unavailable.
  */
 class Speaker(
     context: Context,
@@ -26,6 +27,10 @@ class Speaker(
 
     @Volatile
     private var currentId = ""
+
+    @Volatile
+    private var currentText = ""
+
     private var counter = 0
 
     /** Called on the main thread when the speech engine finishes starting (or fails). */
@@ -65,16 +70,46 @@ class Speaker(
         tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
 
             override fun onStart(utteranceId: String?) {
-                if (utteranceId == currentId) main.post { avatar.setSpeaking(true) }
+                if (utteranceId == currentId) {
+                    main.post {
+                        if (utteranceId == currentId) {
+                            avatar.setSpeaking(true)
+                        }
+                    }
+                }
+            }
+
+            override fun onRangeStart(utteranceId: String?, start: Int, end: Int, frame: Int) {
+                // Ignore callbacks from previous or cancelled utterances
+                if (utteranceId == currentId && !utteranceId.isNullOrEmpty()) {
+                    val spokenText = currentText
+                    main.post {
+                        if (utteranceId == currentId) {
+                            avatar.onSpeechRange(spokenText, start, end)
+                        }
+                    }
+                }
             }
 
             override fun onDone(utteranceId: String?) {
-                if (utteranceId == currentId) main.post { avatar.setSpeaking(false) }
+                if (utteranceId == currentId) {
+                    main.post {
+                        if (utteranceId == currentId) {
+                            avatar.setSpeaking(false)
+                        }
+                    }
+                }
             }
 
             @Deprecated("Deprecated in Java")
             override fun onError(utteranceId: String?) {
-                if (utteranceId == currentId) main.post { avatar.setSpeaking(false) }
+                if (utteranceId == currentId) {
+                    main.post {
+                        if (utteranceId == currentId) {
+                            avatar.setSpeaking(false)
+                        }
+                    }
+                }
             }
         })
 
@@ -124,6 +159,7 @@ class Speaker(
 
         counter++
         currentId = "semmozhi_$counter"
+        currentText = text
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, currentId)
         return true
     }
@@ -131,6 +167,7 @@ class Speaker(
     fun stop() {
         pendingText = null
         currentId = ""
+        currentText = ""
         main.removeCallbacksAndMessages(null)
         if (ready) tts.stop()
         avatar.setSpeaking(false)
@@ -138,6 +175,8 @@ class Speaker(
 
     fun shutdown() {
         main.removeCallbacksAndMessages(null)
+        currentId = ""
+        currentText = ""
         tts.stop()
         tts.shutdown()
     }

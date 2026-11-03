@@ -27,6 +27,7 @@ import kotlin.math.sin
  * - state
  * - setSpeaking(true/false) (preserved for backward compatibility)
  * - isSpeaking
+ * - onSpeechRange(text, start, end) (Phase 2: text-driven lip-sync)
  */
 class SaathiView @JvmOverloads constructor(
     context: Context,
@@ -65,6 +66,10 @@ class SaathiView @JvmOverloads constructor(
         if (newState != State.SPEAKING) {
             patternIndex = 0
             nextSwitch = 0L
+            rangeCallbacksReceived = 0
+            lastRangeCallbackMs = 0L
+            textDrivenMouth = Mouth.REST
+            textDrivenMouthUntil = 0L
         }
 
         postInvalidateOnAnimation()
@@ -82,11 +87,11 @@ class SaathiView @JvmOverloads constructor(
     }
 
     // ---------------------------------------------------------
-    // Mouth states
+    // Mouth states & Visemes
     // ---------------------------------------------------------
 
     private enum class Mouth(
-        @DrawableRes val resId: Int
+        @param:DrawableRes val resId: Int
     ) {
         REST(R.drawable.semmozhi_rest),
         A(R.drawable.semmozhi_a),
@@ -97,7 +102,7 @@ class SaathiView @JvmOverloads constructor(
 
     private val bitmaps: Map<Mouth, Bitmap?> = getOrDecodeBitmaps(resources)
 
-    // Natural-looking mouth animation pattern.
+    // Fallback mouth animation pattern (used when onRangeStart is unavailable).
     private val talkPattern = arrayOf(
         Mouth.A,
         Mouth.E,
@@ -127,6 +132,49 @@ class SaathiView @JvmOverloads constructor(
 
     private var fadeStart = 0L
     private var fade = 1f
+
+    // ---------------------------------------------------------
+    // Text-driven Viseme Lip-Sync (Phase 2)
+    // ---------------------------------------------------------
+
+    @Volatile
+    private var rangeCallbacksReceived = 0
+
+    @Volatile
+    private var lastRangeCallbackMs = 0L
+
+    private var textDrivenMouth = Mouth.REST
+    private var textDrivenMouthUntil = 0L
+
+    /**
+     * Receives word-range timing from Android TTS onRangeStart().
+     * Maps the spoken substring to an approximate mouth viseme.
+     */
+    fun onSpeechRange(text: String, start: Int, end: Int) {
+        if (currentState != State.SPEAKING) return
+        if (start < 0 || end > text.length || start >= end) return
+
+        val now = SystemClock.uptimeMillis()
+        rangeCallbacksReceived++
+        lastRangeCallbackMs = now
+
+        val word = text.substring(start, end)
+        val viseme = VisemeMapper.map(word, text, start, end)
+
+        textDrivenMouth = when (viseme) {
+            VisemeMapper.Viseme.REST -> Mouth.REST
+            VisemeMapper.Viseme.A -> Mouth.A
+            VisemeMapper.Viseme.E -> Mouth.E
+            VisemeMapper.Viseme.O -> Mouth.O
+            VisemeMapper.Viseme.M -> Mouth.M
+        }
+
+        // Hold the viseme for natural word articulation; brief hold for punctuation
+        val holdDuration = if (textDrivenMouth == Mouth.REST) 140L else 190L
+        textDrivenMouthUntil = now + holdDuration
+
+        postInvalidateOnAnimation()
+    }
 
     // ---------------------------------------------------------
     // Small character movement & scale
@@ -182,6 +230,10 @@ class SaathiView @JvmOverloads constructor(
         currentState = State.IDLE
         patternIndex = 0
         nextSwitch = 0L
+        rangeCallbacksReceived = 0
+        lastRangeCallbackMs = 0L
+        textDrivenMouth = Mouth.REST
+        textDrivenMouthUntil = 0L
         previousMouth = Mouth.REST
         currentMouth = Mouth.REST
         fade = 1f
@@ -293,10 +345,24 @@ class SaathiView @JvmOverloads constructor(
 
         when (currentState) {
             State.SPEAKING -> {
-                if (now >= nextSwitch) {
-                    target = talkPattern[patternIndex % talkPattern.size]
-                    patternIndex++
-                    nextSwitch = now + 95L + ((patternIndex * 37) % 70)
+                // If onRangeStart callbacks are actively arriving, use text-driven visemes.
+                // Otherwise seamlessly fall back to talkPattern.
+                val hasRecentTextRange = rangeCallbacksReceived > 0 && (now - lastRangeCallbackMs) < 650L
+
+                if (hasRecentTextRange) {
+                    target = if (now <= textDrivenMouthUntil) {
+                        textDrivenMouth
+                    } else {
+                        // Natural relaxation to REST between words or after punctuation
+                        Mouth.REST
+                    }
+                } else {
+                    // Fallback to existing talkPattern
+                    if (now >= nextSwitch) {
+                        target = talkPattern[patternIndex % talkPattern.size]
+                        patternIndex++
+                        nextSwitch = now + 95L + ((patternIndex * 37) % 70)
+                    }
                 }
             }
 
