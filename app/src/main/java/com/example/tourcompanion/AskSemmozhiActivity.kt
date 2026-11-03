@@ -68,10 +68,17 @@ class AskSemmozhiActivity : AppCompatActivity() {
         askButton.isEnabled = false
 
         lifecycleScope.launch {
-            val answer = repository.answer(question)
-            answerText.text = answer.text
-            speaker.speak(answer.text)
-            askButton.isEnabled = true
+            try {
+                val answer = repository.answer(question)
+                answerText.text = answer.text
+                speaker.speak(answer.text)
+            } catch (e: Exception) {
+                val fallback = getString(R.string.no_answer)
+                answerText.text = fallback
+                speaker.speak(fallback)
+            } finally {
+                askButton.isEnabled = true
+            }
         }
     }
 
