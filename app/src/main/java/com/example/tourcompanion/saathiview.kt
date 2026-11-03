@@ -215,6 +215,9 @@ class SaathiView @JvmOverloads constructor(
     private var auraAlpha = 0f
     private var auraRadius = 0.5f
 
+    // Tracks the character's actual drawn center Y so the aura follows bob/tilt
+    private var charCenterY = 0f
+
     // ---------------------------------------------------------
     // Drawing objects
     // ---------------------------------------------------------
@@ -274,6 +277,7 @@ class SaathiView @JvmOverloads constructor(
         poseScale = 1f
         auraAlpha = 0f
         auraRadius = 0.5f
+        charCenterY = 0f
         super.onDetachedFromWindow()
     }
 
@@ -289,7 +293,12 @@ class SaathiView @JvmOverloads constructor(
 
         // -------------------------------------------------
         // Phase 3A: Draw aura behind the character
+        // Compute character center (follows bob) so the aura is always aligned.
         // -------------------------------------------------
+        if (width > 0 && height > 0) {
+            val size = min(width, height) * 0.96f * poseScale
+            charCenterY = height / 2f + bob * size
+        }
         if (width > 0 && height > 0 && auraAlpha > 0.005f) {
             drawAura(canvas, now)
         }
@@ -387,7 +396,8 @@ class SaathiView @JvmOverloads constructor(
 
     private fun drawAura(canvas: Canvas, now: Long) {
         val cx = width / 2f
-        val cy = height / 2f
+        // cy follows the character's actual drawn center (accounts for bob drift)
+        val cy = if (charCenterY > 0f) charCenterY else height / 2f
         val maxR = min(width, height) * auraRadius
 
         // Build radial gradient: color center → transparent edge
@@ -535,8 +545,8 @@ class SaathiView @JvmOverloads constructor(
         if (emergencyMood) {
             // Emergency: pulsing red aura, moderate alpha, faster pulse
             val pulse = ((sin(time / 320.0) + 1.0) / 2.0).toFloat()  // 0..1
-            targetAlpha = 0.13f + pulse * 0.08f   // 0.13..0.21
-            targetRadius = 0.52f + pulse * 0.04f  // 0.52..0.56
+            targetAlpha = 0.15f + pulse * 0.10f   // 0.15..0.25
+            targetRadius = 0.60f + pulse * 0.05f  // 0.60..0.65
             auraCenterR = 220
             auraCenterG = 38
             auraCenterB = 38   // danger red #DC2626
@@ -553,34 +563,34 @@ class SaathiView @JvmOverloads constructor(
                         // Brief settling glow fades out gracefully
                         val envelope = 1f - (elapsedInState.toFloat() / IDLE_SETTLE_MS)
                         val pulse = ((sin(time / 1800.0) + 1.0) / 2.0).toFloat()
-                        targetAlpha = (0.04f + pulse * 0.02f) * envelope
-                        targetRadius = 0.46f + pulse * 0.02f * envelope
+                        targetAlpha = (0.05f + pulse * 0.02f) * envelope
+                        targetRadius = 0.56f + pulse * 0.02f * envelope
                     } else {
                         // Fully settled: aura OFF (0% CPU)
                         targetAlpha = 0f
-                        targetRadius = 0.46f
+                        targetRadius = 0.56f
                     }
                 }
 
                 State.LISTENING -> {
                     // Slightly brighter, steady glow — Semmozhi is alert
                     val pulse = ((sin(time / 900.0) + 1.0) / 2.0).toFloat()
-                    targetAlpha = 0.10f + pulse * 0.04f   // 0.10..0.14
-                    targetRadius = 0.50f + pulse * 0.02f  // 0.50..0.52
+                    targetAlpha = 0.12f + pulse * 0.05f   // 0.12..0.17
+                    targetRadius = 0.58f + pulse * 0.03f  // 0.58..0.61
                 }
 
                 State.THINKING -> {
                     // Gentle animated pulse — processing
                     val pulse = ((sin(time / 600.0) + 1.0) / 2.0).toFloat()
-                    targetAlpha = 0.09f + pulse * 0.06f   // 0.09..0.15
-                    targetRadius = 0.48f + pulse * 0.03f  // 0.48..0.51
+                    targetAlpha = 0.10f + pulse * 0.07f   // 0.10..0.17
+                    targetRadius = 0.57f + pulse * 0.04f  // 0.57..0.61
                 }
 
                 State.SPEAKING -> {
                     // Slightly stronger, loose speech pulse — not phoneme-exact
                     val pulse = ((sin(time / 380.0) + 1.0) / 2.0).toFloat()
-                    targetAlpha = 0.11f + pulse * 0.07f   // 0.11..0.18
-                    targetRadius = 0.50f + pulse * 0.04f  // 0.50..0.54
+                    targetAlpha = 0.13f + pulse * 0.08f   // 0.13..0.21
+                    targetRadius = 0.58f + pulse * 0.05f  // 0.58..0.63
                 }
             }
         }
