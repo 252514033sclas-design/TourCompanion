@@ -26,6 +26,7 @@ import java.util.Locale
 class VoiceCheckActivity : AppCompatActivity() {
 
     private lateinit var speaker: Speaker
+    private lateinit var voiceAvatar: SaathiView
     private lateinit var statusText: TextView
     private lateinit var heardText: TextView
 
@@ -37,6 +38,7 @@ class VoiceCheckActivity : AppCompatActivity() {
 
     private val listenLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            voiceAvatar.setState(SaathiView.State.IDLE)
             val heard = result.data
                 ?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                 ?.firstOrNull()
@@ -56,8 +58,9 @@ class VoiceCheckActivity : AppCompatActivity() {
 
         statusText = findViewById(R.id.voiceStatus)
         heardText = findViewById(R.id.heardText)
+        voiceAvatar = findViewById(R.id.voiceAvatar)
 
-        speaker = Speaker(this, findViewById(R.id.voiceAvatar))
+        speaker = Speaker(this, voiceAvatar)
         speaker.onStateChanged = { refresh() }
 
         findViewById<Button>(R.id.testSpeakButton).setOnClickListener {
@@ -111,8 +114,10 @@ class VoiceCheckActivity : AppCompatActivity() {
             putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_prompt))
         }
         try {
+            voiceAvatar.setState(SaathiView.State.LISTENING)
             listenLauncher.launch(intent)
         } catch (e: ActivityNotFoundException) {
+            voiceAvatar.setState(SaathiView.State.IDLE)
             toast(R.string.voice_unavailable)
         }
     }

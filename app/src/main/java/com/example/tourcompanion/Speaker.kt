@@ -97,7 +97,10 @@ class Speaker(
      */
     fun speak(text: String, locale: Locale = Locale.ENGLISH): Boolean {
 
-        if (!Prefs.voiceEnabled(appContext)) return true
+        if (!Prefs.voiceEnabled(appContext)) {
+            avatar.setSpeaking(false)
+            return true
+        }
 
         if (failed) {
             animateOnly(text)
@@ -113,6 +116,7 @@ class Speaker(
         if (result == TextToSpeech.LANG_MISSING_DATA ||
             result == TextToSpeech.LANG_NOT_SUPPORTED
         ) {
+            avatar.setSpeaking(false)
             return false
         }
 

@@ -1,6 +1,7 @@
 package com.example.tourcompanion
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
@@ -10,6 +11,7 @@ import android.os.SystemClock
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.DrawableRes
+import java.util.EnumMap
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.sin
@@ -20,24 +22,11 @@ import kotlin.math.sin
  * The class name remains SaathiView so existing layouts
  * and activities do not need to be changed.
  *
- * The character uses five images with different mouth states:
- *
- * semmozhi_rest
- * semmozhi_a
- * semmozhi_e
- * semmozhi_o
- * semmozhi_m
- *
- * Put these images inside:
- *
- * app/src/main/res/drawable-nodpi/
- *
  * Public API:
- * setSpeaking(true/false)
- * isSpeaking
- *
- * While speaking, the mouth cycles through the different
- * mouth images and the character makes subtle movements.
+ * - setState(State.IDLE / LISTENING / THINKING / SPEAKING)
+ * - state
+ * - setSpeaking(true/false) (preserved for backward compatibility)
+ * - isSpeaking
  */
 class SaathiView @JvmOverloads constructor(
     context: Context,
@@ -46,22 +35,50 @@ class SaathiView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     // ---------------------------------------------------------
-    // Speaking state
+    // Character states
     // ---------------------------------------------------------
 
+    enum class State {
+        IDLE,
+        LISTENING,
+        THINKING,
+        SPEAKING
+    }
+
     @Volatile
-    private var talking = false
+    private var currentState: State = State.IDLE
+
+    val state: State
+        get() = currentState
 
     val isSpeaking: Boolean
-        get() = talking
+        get() = currentState == State.SPEAKING
 
-    fun setSpeaking(speaking: Boolean) {
-        if (talking == speaking) {
+    fun setState(newState: State) {
+        if (currentState == newState) {
             return
         }
 
-        talking = speaking
+        currentState = newState
+        stateEnteredAt = SystemClock.uptimeMillis()
+
+        if (newState != State.SPEAKING) {
+            patternIndex = 0
+            nextSwitch = 0L
+        }
+
         postInvalidateOnAnimation()
+    }
+
+    fun setSpeaking(speaking: Boolean) {
+        if (speaking) {
+            setState(State.SPEAKING)
+        } else if (currentState == State.SPEAKING) {
+            setState(State.IDLE)
+        } else {
+            // Ensure THINKING or LISTENING returns to IDLE when Speaker.stop() is called
+            setState(State.IDLE)
+        }
     }
 
     // ---------------------------------------------------------
@@ -78,8 +95,7 @@ class SaathiView @JvmOverloads constructor(
         M(R.drawable.semmozhi_m)
     }
 
-    private val bitmaps =
-        HashMap<Mouth, Bitmap?>()
+    private val bitmaps: Map<Mouth, Bitmap?> = getOrDecodeBitmaps(resources)
 
     // Natural-looking mouth animation pattern.
     private val talkPattern = arrayOf(
@@ -104,7 +120,6 @@ class SaathiView @JvmOverloads constructor(
     )
 
     private var patternIndex = 0
-
     private var nextSwitch = 0L
 
     private var previousMouth = Mouth.REST
@@ -114,11 +129,13 @@ class SaathiView @JvmOverloads constructor(
     private var fade = 1f
 
     // ---------------------------------------------------------
-    // Small character movement
+    // Small character movement & scale
     // ---------------------------------------------------------
 
+    private var stateEnteredAt = SystemClock.uptimeMillis()
     private var bob = 0f
     private var tilt = 0f
+    private var poseScale = 1f
 
     // ---------------------------------------------------------
     // Drawing objects
@@ -135,29 +152,6 @@ class SaathiView @JvmOverloads constructor(
         RectF()
 
     // ---------------------------------------------------------
-    // Load character images
-    // ---------------------------------------------------------
-
-    init {
-
-        val options =
-            BitmapFactory.Options().apply {
-                inScaled = false
-            }
-
-        // Direct R.drawable references (not getIdentifier) so release builds
-        // never strip these images.
-        for (mouth in Mouth.entries) {
-            bitmaps[mouth] =
-                BitmapFactory.decodeResource(
-                    resources,
-                    mouth.resId,
-                    options
-                )
-        }
-    }
-
-    // ---------------------------------------------------------
     // View size
     // ---------------------------------------------------------
 
@@ -165,29 +159,36 @@ class SaathiView @JvmOverloads constructor(
         widthMeasureSpec: Int,
         heightMeasureSpec: Int
     ) {
+        val density = resources.displayMetrics.density
+        val defaultSize = (DEFAULT_DP * density).toInt()
 
-        val density =
-            resources.displayMetrics.density
+        val width = resolveSize(defaultSize, widthMeasureSpec)
+        val height = resolveSize(defaultSize, heightMeasureSpec)
 
-        val defaultSize =
-            (DEFAULT_DP * density).toInt()
+        setMeasuredDimension(width, height)
+    }
 
-        val width =
-            resolveSize(
-                defaultSize,
-                widthMeasureSpec
-            )
+    // ---------------------------------------------------------
+    // Lifecycle safety
+    // ---------------------------------------------------------
 
-        val height =
-            resolveSize(
-                defaultSize,
-                heightMeasureSpec
-            )
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        stateEnteredAt = SystemClock.uptimeMillis()
+        postInvalidateOnAnimation()
+    }
 
-        setMeasuredDimension(
-            width,
-            height
-        )
+    override fun onDetachedFromWindow() {
+        currentState = State.IDLE
+        patternIndex = 0
+        nextSwitch = 0L
+        previousMouth = Mouth.REST
+        currentMouth = Mouth.REST
+        fade = 1f
+        bob = 0f
+        tilt = 0f
+        poseScale = 1f
+        super.onDetachedFromWindow()
     }
 
     // ---------------------------------------------------------
@@ -195,12 +196,9 @@ class SaathiView @JvmOverloads constructor(
     // ---------------------------------------------------------
 
     override fun onDraw(canvas: Canvas) {
-
         super.onDraw(canvas)
 
-        val now =
-            SystemClock.uptimeMillis()
-
+        val now = SystemClock.uptimeMillis()
         update(now)
 
         val currentBitmap =
@@ -212,17 +210,10 @@ class SaathiView @JvmOverloads constructor(
             width > 0 &&
             height > 0
         ) {
-
-            // Fit character inside the available view.
-            val size =
-                min(width, height) * 0.96f
-
-            val left =
-                (width - size) / 2f
-
-            val top =
-                (height - size) / 2f +
-                        bob * size
+            // Fit character inside the available view with subtle pose scale.
+            val size = min(width, height) * 0.96f * poseScale
+            val left = (width - size) / 2f
+            val top = (height - size) / 2f + bob * size
 
             destination.set(
                 left,
@@ -247,15 +238,12 @@ class SaathiView @JvmOverloads constructor(
                 fade < 1f &&
                 previousMouth != currentMouth
             ) {
-
                 val previousBitmap =
                     bitmaps[previousMouth]
                         ?: bitmaps[Mouth.REST]
 
                 if (previousBitmap != null) {
-
                     paint.alpha = 255
-
                     canvas.drawBitmap(
                         previousBitmap,
                         null,
@@ -264,11 +252,8 @@ class SaathiView @JvmOverloads constructor(
                     )
                 }
 
-                paint.alpha =
-                    (fade * 255f).toInt()
-
+                paint.alpha = (fade * 255f).toInt()
             } else {
-
                 paint.alpha = 255
             }
 
@@ -280,18 +265,21 @@ class SaathiView @JvmOverloads constructor(
             )
 
             paint.alpha = 255
-
             canvas.restore()
         }
 
-        // Continue animation only when required.
+        // Continue animation only when required (battery-efficient).
+        val idleSettling =
+            currentState == State.IDLE && (now - stateEnteredAt) < IDLE_SETTLE_MS
+
         if (
-            talking ||
+            currentState != State.IDLE ||
+            idleSettling ||
             fade < 1f ||
             abs(bob) > 0.0004f ||
-            abs(tilt) > 0.02f
+            abs(tilt) > 0.02f ||
+            abs(poseScale - 1f) > 0.0008f
         ) {
-
             postInvalidateOnAnimation()
         }
     }
@@ -301,39 +289,29 @@ class SaathiView @JvmOverloads constructor(
     // ---------------------------------------------------------
 
     private fun update(now: Long) {
+        var target = currentMouth
 
-        var target =
-            currentMouth
-
-        // -----------------------------------------------------
-        // Mouth animation while speaking
-        // -----------------------------------------------------
-
-        if (talking) {
-
-            if (now >= nextSwitch) {
-
-                target =
-                    talkPattern[
-                        patternIndex % talkPattern.size
-                    ]
-
-                patternIndex++
-
-                nextSwitch =
-                    now +
-                            95L +
-                            ((patternIndex * 37) % 70)
+        when (currentState) {
+            State.SPEAKING -> {
+                if (now >= nextSwitch) {
+                    target = talkPattern[patternIndex % talkPattern.size]
+                    patternIndex++
+                    nextSwitch = now + 95L + ((patternIndex * 37) % 70)
+                }
             }
 
-        } else {
+            State.THINKING -> {
+                // Pursed thinking expression
+                target = Mouth.M
+                patternIndex = 0
+                nextSwitch = 0L
+            }
 
-            // Return to resting mouth.
-            target =
-                Mouth.REST
-
-            patternIndex = 0
-            nextSwitch = 0L
+            State.LISTENING, State.IDLE -> {
+                target = Mouth.REST
+                patternIndex = 0
+                nextSwitch = 0L
+            }
         }
 
         // -----------------------------------------------------
@@ -341,71 +319,106 @@ class SaathiView @JvmOverloads constructor(
         // -----------------------------------------------------
 
         if (target != currentMouth) {
-
-            previousMouth =
-                currentMouth
-
-            currentMouth =
-                target
-
-            fadeStart =
-                now
-
+            previousMouth = currentMouth
+            currentMouth = target
+            fadeStart = now
             fade = 0f
         }
 
         if (fade < 1f) {
-
-            fade =
-                min(
-                    1f,
-                    (now - fadeStart) /
-                            FADE_MS
-                )
+            fade = min(1f, (now - fadeStart) / FADE_MS)
         }
 
         // -----------------------------------------------------
-        // Small head movement while speaking
+        // State-specific head movement & pose
         // -----------------------------------------------------
 
-        val time =
-            now.toDouble()
+        val time = now.toDouble()
+        val elapsedInState = now - stateEnteredAt
 
-        val targetBob =
-            if (talking) {
-                (
-                        sin(time / 170.0) *
-                                0.004
-                        ).toFloat()
-            } else {
-                0f
+        val targetBob: Float
+        val targetTilt: Float
+        val targetScale: Float
+
+        when (currentState) {
+            State.SPEAKING -> {
+                targetBob = (sin(time / 170.0) * 0.004).toFloat()
+                targetTilt = (sin(time / 520.0) * 0.7).toFloat()
+                targetScale = 1f
             }
 
-        val targetTilt =
-            if (talking) {
-                (
-                        sin(time / 520.0) *
-                                0.7
-                        ).toFloat()
-            } else {
-                0f
+            State.THINKING -> {
+                // Subtle curious head tilt, gentle vertical sway, and light thinking pulse
+                targetBob = (sin(time / 320.0) * 0.003).toFloat()
+                targetTilt = 1.8f + (sin(time / 450.0) * 0.6).toFloat()
+                targetScale = 1f + (sin(time / 360.0) * 0.006).toFloat()
             }
 
-        bob +=
-            (targetBob - bob) * 0.25f
+            State.LISTENING -> {
+                // Attentive slight lean-in and subtle lively breath while mic is open
+                targetBob = -0.006f + (sin(time / 400.0) * 0.002).toFloat()
+                targetTilt = -0.6f + (sin(time / 650.0) * 0.3).toFloat()
+                targetScale = 1.025f
+            }
 
-        tilt +=
-            (targetTilt - tilt) * 0.15f
+            State.IDLE -> {
+                // Bounded gentle breathing and head drift that smoothly settles to rest (no infinite loop)
+                if (elapsedInState < IDLE_SETTLE_MS) {
+                    val envelope = 1f - (elapsedInState.toFloat() / IDLE_SETTLE_MS)
+                    targetBob = (sin(time / 550.0) * 0.0025 * envelope).toFloat()
+                    targetTilt = (sin(time / 900.0) * 0.35 * envelope).toFloat()
+                    targetScale = 1f + (sin(time / 650.0) * 0.0035 * envelope).toFloat()
+                } else {
+                    targetBob = 0f
+                    targetTilt = 0f
+                    targetScale = 1f
+                }
+            }
+        }
+
+        bob += (targetBob - bob) * 0.20f
+        tilt += (targetTilt - tilt) * 0.15f
+        poseScale += (targetScale - poseScale) * 0.18f
     }
 
     // ---------------------------------------------------------
-    // Constants
+    // Shared Bitmap Cache & Constants
     // ---------------------------------------------------------
 
     private companion object {
-
         const val DEFAULT_DP = 240f
-
         const val FADE_MS = 70f
+        const val IDLE_SETTLE_MS = 2800L
+
+        @Volatile
+        private var sharedBitmaps: Map<Mouth, Bitmap?>? = null
+
+        fun getOrDecodeBitmaps(resources: Resources): Map<Mouth, Bitmap?> {
+            sharedBitmaps?.let { cached ->
+                if (cached.values.all { it != null && !it.isRecycled }) {
+                    return cached
+                }
+            }
+            return synchronized(this) {
+                sharedBitmaps?.let { cached ->
+                    if (cached.values.all { it != null && !it.isRecycled }) {
+                        return@synchronized cached
+                    }
+                }
+                val options = BitmapFactory.Options().apply {
+                    inScaled = false
+                }
+                val decoded = EnumMap<Mouth, Bitmap?>(Mouth::class.java)
+                for (mouth in Mouth.entries) {
+                    decoded[mouth] = BitmapFactory.decodeResource(
+                        resources,
+                        mouth.resId,
+                        options
+                    )
+                }
+                sharedBitmaps = decoded
+                decoded
+            }
+        }
     }
 }

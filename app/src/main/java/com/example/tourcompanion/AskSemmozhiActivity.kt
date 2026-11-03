@@ -66,17 +66,25 @@ class AskSemmozhiActivity : AppCompatActivity() {
 
         answerText.text = getString(R.string.thinking)
         askButton.isEnabled = false
+        saathiView.setState(SaathiView.State.THINKING)
 
         lifecycleScope.launch {
             try {
                 val answer = repository.answer(question)
                 answerText.text = answer.text
-                speaker.speak(answer.text)
+                if (!speaker.speak(answer.text)) {
+                    saathiView.setState(SaathiView.State.IDLE)
+                }
             } catch (e: Exception) {
                 val fallback = getString(R.string.no_answer)
                 answerText.text = fallback
-                speaker.speak(fallback)
+                if (!speaker.speak(fallback)) {
+                    saathiView.setState(SaathiView.State.IDLE)
+                }
             } finally {
+                if (saathiView.state == SaathiView.State.THINKING && !Prefs.voiceEnabled(this@AskSemmozhiActivity)) {
+                    saathiView.setState(SaathiView.State.IDLE)
+                }
                 askButton.isEnabled = true
             }
         }

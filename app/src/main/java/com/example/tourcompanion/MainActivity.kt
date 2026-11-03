@@ -65,7 +65,11 @@ class MainActivity : AppCompatActivity() {
                 if (!spoken.isNullOrBlank()) {
                     questionInput.setText(spoken)
                     answerQuestion(spoken)
+                } else {
+                    saathiView.setState(SaathiView.State.IDLE)
                 }
+            } else {
+                saathiView.setState(SaathiView.State.IDLE)
             }
         }
 
@@ -379,12 +383,25 @@ class MainActivity : AppCompatActivity() {
         hideKeyboard()
         answerText.text = getString(R.string.thinking)
         setBusy(true)
+        saathiView.setState(SaathiView.State.THINKING)
 
         lifecycleScope.launch {
-            val answer = repository.answer(question)
-            answerText.text = answer.text
-            speaker.speak(answer.text)
-            setBusy(false)
+            try {
+                val answer = repository.answer(question)
+                answerText.text = answer.text
+                if (!speaker.speak(answer.text)) {
+                    saathiView.setState(SaathiView.State.IDLE)
+                }
+            } catch (e: Exception) {
+                val fallback = getString(R.string.no_answer)
+                answerText.text = fallback
+                saathiView.setState(SaathiView.State.IDLE)
+            } finally {
+                if (saathiView.state == SaathiView.State.THINKING && !Prefs.voiceEnabled(this@MainActivity)) {
+                    saathiView.setState(SaathiView.State.IDLE)
+                }
+                setBusy(false)
+            }
         }
     }
 
@@ -405,8 +422,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         try {
+            saathiView.setState(SaathiView.State.LISTENING)
             voiceResultLauncher.launch(intent)
         } catch (e: ActivityNotFoundException) {
+            saathiView.setState(SaathiView.State.IDLE)
             Toast.makeText(this, R.string.voice_unavailable, Toast.LENGTH_LONG).show()
         }
     }
