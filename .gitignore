@@ -15,6 +15,9 @@
 local.properties
 
 .env
+config_ai.php
+backend/php/config_ai.php
+backend/config_ai.php
 backend/node_modules
 *.jks
 *.keystore

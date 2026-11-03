@@ -4,6 +4,12 @@ header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../config.php';
 
+if (file_exists(__DIR__ . '/../gemini_grounded.php')) {
+    require_once __DIR__ . '/../gemini_grounded.php';
+} elseif (file_exists(__DIR__ . '/gemini_grounded.php')) {
+    require_once __DIR__ . '/gemini_grounded.php';
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode([
@@ -100,7 +106,7 @@ if ($result) {
         $normTopic = normalize_text($topic);
         $normTopicPadded = ' ' . $normTopic . ' ';
 
-        // Fast-path for emergency
+        // Fast-path for emergency (100% deterministic, Gemini NEVER called for emergency)
         if ($isEmergency && strtolower($topic) === 'emergency') {
             $bestTip = $row;
             $bestScore = 9999;
@@ -182,19 +188,35 @@ if ($bestTip === null || $bestScore < $MIN_SCORE) {
     exit;
 }
 
-$answer = $bestTip['answer'];
+$deterministicAnswer = $bestTip['answer'];
+$finalAnswer = $deterministicAnswer;
+$isAi = false;
+
+// Call Gemini 3.8 Flash ONLY for non-emergency, verified tips
+if (!$isEmergency && function_exists('call_gemini_grounded')) {
+    $aiAnswer = call_gemini_grounded($question, $bestTip['topic'], $deterministicAnswer);
+    if ($aiAnswer !== null && $aiAnswer !== '') {
+        $finalAnswer = $aiAnswer;
+        $isAi = true;
+    }
+}
 
 $stmt = $conn->prepare(
     "INSERT INTO query_logs (user_id, question, answer)
      VALUES (NULLIF(?, 0), ?, ?)"
 );
-$stmt->bind_param("iss", $userId, $question, $answer);
+$stmt->bind_param("iss", $userId, $question, $finalAnswer);
 $stmt->execute();
 $stmt->close();
 
-echo json_encode([
+$response = [
     "status" => "ok",
     "question" => $question,
     "topic" => $bestTip['topic'],
-    "answer" => $answer
-], JSON_UNESCAPED_UNICODE);
+    "answer" => $finalAnswer
+];
+if ($isAi) {
+    $response["ai_generated"] = true;
+}
+
+echo json_encode($response, JSON_UNESCAPED_UNICODE);
