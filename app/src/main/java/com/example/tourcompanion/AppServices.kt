@@ -17,6 +17,9 @@ object AppServices {
     @Volatile
     private var usefulPhrases: UsefulPhrasesRepository? = null
 
+    @Volatile
+    private var safety: SafetyRepository? = null
+
     fun userRepository(context: Context): UserRepository =
         users ?: synchronized(this) {
             users ?: UserRepository(context.applicationContext).also { users = it }
@@ -35,5 +38,10 @@ object AppServices {
     fun usefulPhrasesRepository(context: Context): UsefulPhrasesRepository =
         usefulPhrases ?: synchronized(this) {
             usefulPhrases ?: UsefulPhrasesRepository(context.applicationContext).also { usefulPhrases = it }
+        }
+
+    fun safetyRepository(context: Context): SafetyRepository =
+        safety ?: synchronized(this) {
+            safety ?: SafetyRepository(context.applicationContext).also { safety = it }
         }
 }
