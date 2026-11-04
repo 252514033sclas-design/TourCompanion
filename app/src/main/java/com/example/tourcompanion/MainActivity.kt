@@ -43,6 +43,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var panelSafety: View
     private lateinit var panelProfile: View
 
+    private var currentTabId: Int = R.id.nav_home
+    private var profileNameView: TextView? = null
+    private var profileEmailView: TextView? = null
+    private var profileLanguageView: TextView? = null
+    private var profileJoinedView: TextView? = null
+    private var profileBuiltForLoggedIn: Boolean? = null
+
     private lateinit var speaker: Speaker
     private lateinit var repository: AnswerRepository
 
@@ -190,17 +197,19 @@ class MainActivity : AppCompatActivity() {
         row(safety, "☎️", R.string.menu_helplines, R.string.menu_helplines_sub, HelplinesActivity::class.java)
         row(safety, "👤", R.string.menu_contact, R.string.menu_contact_sub, MyContactActivity::class.java)
 
-        buildProfile()
+        updateProfileData(fetchRemote = true)
 
         bottomNav.setOnItemSelectedListener { item ->
-            showPanel(item.itemId)
+            if (item.itemId != currentTabId) {
+                showPanel(item.itemId)
+            }
             true
         }
 
         // Back from another tab returns to Home first; back on Home leaves the app.
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (bottomNav.selectedItemId != R.id.nav_home) {
+                if (currentTabId != R.id.nav_home) {
                     bottomNav.selectedItemId = R.id.nav_home
                 } else {
                     isEnabled = false
@@ -228,12 +237,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showPanel(itemId: Int) {
+        if (itemId == currentTabId) return
+        currentTabId = itemId
+
         panelHome.visibility = if (itemId == R.id.nav_home) View.VISIBLE else View.GONE
         panelExplore.visibility = if (itemId == R.id.nav_explore) View.VISIBLE else View.GONE
         panelSafety.visibility = if (itemId == R.id.nav_safety) View.VISIBLE else View.GONE
         panelProfile.visibility = if (itemId == R.id.nav_profile) View.VISIBLE else View.GONE
+
         if (itemId == R.id.nav_profile) {
-            buildProfile()
+            updateProfileData(fetchRemote = false)
         }
     }
 
@@ -241,49 +254,19 @@ class MainActivity : AppCompatActivity() {
     // Profile tab: who you are, tools, log out, delete account
     // ---------------------------------------------------------
 
-    private fun buildProfile() {
+    private fun ensureProfileBuilt(loggedIn: Boolean) {
+        if (profileBuiltForLoggedIn == loggedIn) {
+            return
+        }
+
         val container = findViewById<LinearLayout>(R.id.profileContainer)
         container.removeAllViews()
 
-        val loggedIn = Session.isLoggedIn(this)
-
         val header = LayoutInflater.from(this).inflate(R.layout.item_profile_header, container, false)
-        val nameView = header.findViewById<TextView>(R.id.profileName)
-        val emailView = header.findViewById<TextView>(R.id.profileEmail)
-        val languageView = header.findViewById<TextView>(R.id.profileLanguage)
-        val joinedView = header.findViewById<TextView>(R.id.profileJoined)
-
-        nameView.text = if (loggedIn) Session.userName(this) else getString(R.string.profile_guest)
-        emailView.text = if (loggedIn) Session.userEmail(this) else getString(R.string.profile_guest_sub)
-
-        if (loggedIn) {
-            val cachedLang = Session.userLanguage(this)
-            if (cachedLang.isNotBlank()) {
-                languageView.visibility = View.VISIBLE
-                languageView.text = "Language: $cachedLang"
-            }
-            val cachedJoined = Session.userCreatedAt(this)
-            if (cachedJoined.isNotBlank()) {
-                joinedView.visibility = View.VISIBLE
-                joinedView.text = "Joined: $cachedJoined"
-            }
-
-            val userId = Session.userId(this)
-            lifecycleScope.launch {
-                val profile = AppServices.userRepository(applicationContext).getProfile(userId)
-                if (profile != null) {
-                    Session.updateProfile(this@MainActivity, profile)
-                    nameView.text = profile.name
-                    emailView.text = profile.email
-                    languageView.visibility = View.VISIBLE
-                    languageView.text = "Language: ${profile.language}"
-                    if (profile.createdAt.isNotBlank()) {
-                        joinedView.visibility = View.VISIBLE
-                        joinedView.text = "Joined: ${profile.createdAt}"
-                    }
-                }
-            }
-        }
+        profileNameView = header.findViewById(R.id.profileName)
+        profileEmailView = header.findViewById(R.id.profileEmail)
+        profileLanguageView = header.findViewById(R.id.profileLanguage)
+        profileJoinedView = header.findViewById(R.id.profileJoined)
 
         container.addView(header)
 
@@ -304,6 +287,62 @@ class MainActivity : AppCompatActivity() {
             UiKit.addMenuRow(container, "🔐", getString(R.string.menu_login), getString(R.string.menu_login_sub)) {
                 startActivity(Intent(this, AuthActivity::class.java))
             }
+        }
+
+        profileBuiltForLoggedIn = loggedIn
+    }
+
+    private fun updateProfileData(fetchRemote: Boolean = false) {
+        val loggedIn = Session.isLoggedIn(this)
+        ensureProfileBuilt(loggedIn)
+
+        val nameView = profileNameView ?: return
+        val emailView = profileEmailView ?: return
+        val languageView = profileLanguageView ?: return
+        val joinedView = profileJoinedView ?: return
+
+        nameView.text = if (loggedIn) Session.userName(this) else getString(R.string.profile_guest)
+        emailView.text = if (loggedIn) Session.userEmail(this) else getString(R.string.profile_guest_sub)
+
+        if (loggedIn) {
+            val cachedLang = Session.userLanguage(this)
+            if (cachedLang.isNotBlank()) {
+                languageView.visibility = View.VISIBLE
+                languageView.text = "Language: $cachedLang"
+            } else {
+                languageView.visibility = View.GONE
+            }
+
+            val cachedJoined = Session.userCreatedAt(this)
+            if (cachedJoined.isNotBlank()) {
+                joinedView.visibility = View.VISIBLE
+                joinedView.text = "Joined: $cachedJoined"
+            } else {
+                joinedView.visibility = View.GONE
+            }
+
+            if (fetchRemote) {
+                val userId = Session.userId(this)
+                lifecycleScope.launch {
+                    val profile = AppServices.userRepository(applicationContext).getProfile(userId)
+                    if (profile != null) {
+                        Session.updateProfile(this@MainActivity, profile)
+                        nameView.text = profile.name
+                        emailView.text = profile.email
+                        if (profile.language.isNotBlank()) {
+                            languageView.visibility = View.VISIBLE
+                            languageView.text = "Language: ${profile.language}"
+                        }
+                        if (profile.createdAt.isNotBlank()) {
+                            joinedView.visibility = View.VISIBLE
+                            joinedView.text = "Joined: ${profile.createdAt}"
+                        }
+                    }
+                }
+            }
+        } else {
+            languageView.visibility = View.GONE
+            joinedView.visibility = View.GONE
         }
     }
 
@@ -373,7 +412,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         // The user may have just logged in from the Profile tab.
         if (::panelProfile.isInitialized) {
-            buildProfile()
+            updateProfileData(fetchRemote = false)
             updateGreeting()
         }
     }

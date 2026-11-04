@@ -1,6 +1,8 @@
 package com.example.tourcompanion
 
+import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,6 +17,13 @@ class SplashActivity : AppCompatActivity() {
         val next = if (Session.hasChosen(this)) MainActivity::class.java else AuthActivity::class.java
         startActivity(Intent(this, next))
         finish()
+        if (Build.VERSION.SDK_INT >= 34) {
+            overrideActivityTransition(Activity.OVERRIDE_TRANSITION_OPEN, 0, 0)
+            overrideActivityTransition(Activity.OVERRIDE_TRANSITION_CLOSE, 0, 0)
+        } else {
+            @Suppress("DEPRECATION")
+            overridePendingTransition(0, 0)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

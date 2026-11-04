@@ -14,4 +14,11 @@
         <item name="android:textColorSecondary">@color/text_secondary</item>
         <item name="materialButtonStyle">@style/Widget.Tour.Button.Primary</item>
     </style>
+
+    <style name="Theme.TourCompanion.Splash" parent="Theme.TourCompanion">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
 </resources>
