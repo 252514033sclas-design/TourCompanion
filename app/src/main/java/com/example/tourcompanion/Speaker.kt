@@ -5,6 +5,8 @@ import android.os.Handler
 import android.os.Looper
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
+import android.speech.tts.Voice
+import android.util.Log
 import java.util.Locale
 
 /**
@@ -23,7 +25,7 @@ class Speaker(
     private var ready = false
     private var failed = false
     private var pendingText: String? = null
-    private var pendingLocale: Locale = Locale.ENGLISH
+    private var pendingLocale: Locale = DEFAULT_LOCALE
 
     @Volatile
     private var currentId = ""
@@ -59,13 +61,22 @@ class Speaker(
             return
         }
 
-        val result = tts.setLanguage(Locale.ENGLISH)
+        var result = tts.setLanguage(DEFAULT_LOCALE)
+        var activeLocale = DEFAULT_LOCALE
         if (result == TextToSpeech.LANG_MISSING_DATA ||
             result == TextToSpeech.LANG_NOT_SUPPORTED
         ) {
-            markFailed()
-            return
+            val fallbackResult = tts.setLanguage(Locale.ENGLISH)
+            if (fallbackResult == TextToSpeech.LANG_MISSING_DATA ||
+                fallbackResult == TextToSpeech.LANG_NOT_SUPPORTED
+            ) {
+                markFailed()
+                return
+            }
+            activeLocale = Locale.ENGLISH
         }
+
+        applyBestVoice(activeLocale)
 
         tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
 
@@ -130,7 +141,7 @@ class Speaker(
      * Speaks [text]. Returns false if it could not be spoken (engine missing, or no voice
      * installed for [locale]) so the caller can show a hint.
      */
-    fun speak(text: String, locale: Locale = Locale.ENGLISH): Boolean {
+    fun speak(text: String, locale: Locale = DEFAULT_LOCALE): Boolean {
 
         if (!Prefs.voiceEnabled(appContext)) {
             avatar.setSpeaking(false)
@@ -155,6 +166,9 @@ class Speaker(
             return false
         }
 
+        applyBestVoice(locale)
+
+        tts.setPitch(DEFAULT_PITCH)
         tts.setSpeechRate(Prefs.speechRate(appContext))
 
         counter++
@@ -162,6 +176,81 @@ class Speaker(
         currentText = text
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, currentId)
         return true
+    }
+
+    /**
+     * Inspects available voices in TextToSpeech and selects the best natural/local voice
+     * matching [locale]. Prioritizes offline voices and Semmozhi female character persona
+     * while avoiding legacy Seanet embedded voices when higher-quality alternatives exist.
+     */
+    private fun applyBestVoice(locale: Locale) {
+        try {
+            val voices = tts.voices ?: return
+            if (voices.isEmpty()) return
+
+            val matchingVoices = voices.filter { voice ->
+                val vl = voice.locale
+                vl != null && vl.language.equals(locale.language, ignoreCase = true)
+            }
+            if (matchingVoices.isEmpty()) return
+
+            val bestVoice = matchingVoices.maxByOrNull { voice ->
+                var score = 0
+
+                // 1. Exact country match (e.g. IN for en-IN / ta-IN / hi-IN)
+                if (locale.country.isNotEmpty() &&
+                    voice.locale.country.equals(locale.country, ignoreCase = true)
+                ) {
+                    score += 50
+                }
+
+                // 2. Offline / local voice preferred
+                if (!voice.isNetworkConnectionRequired) {
+                    score += 30
+                }
+
+                val name = voice.name.lowercase(Locale.ROOT)
+
+                // 3. Avoid legacy Seanet embedded voices if alternatives exist
+                if (name.contains("seanet-embedded")) {
+                    score -= 40
+                }
+
+                // 4. Prefer Google TTS high-quality downloaded local packs
+                if (name.contains("-local")) {
+                    score += 25
+                }
+
+                // 5. Prefer Semmozhi female companion voices
+                val isPreferredTarget = when {
+                    name.contains("ena-local") || name.contains("end-local") -> true
+                    name.contains("tac-local") -> true
+                    name.contains("hia-local") || name.contains("hid-local") -> true
+                    else -> false
+                }
+                if (isPreferredTarget) {
+                    score += 40
+                }
+
+                if (voice.features?.any { it.contains("female", ignoreCase = true) } == true) {
+                    score += 20
+                }
+
+                score += voice.quality
+                score
+            }
+
+            bestVoice?.let { voice ->
+                if (voice.locale.language.equals(locale.language, ignoreCase = true)) {
+                    val status = tts.setVoice(voice)
+                    if (status == TextToSpeech.SUCCESS) {
+                        Log.d(TAG, "Selected voice: ${voice.name} for locale: ${voice.locale}")
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "applyBestVoice error, continuing with default TTS voice", e)
+        }
     }
 
     fun stop() {
@@ -189,5 +278,11 @@ class Speaker(
             { avatar.setSpeaking(false) },
             (text.length * 55L).coerceIn(1500L, 8000L)
         )
+    }
+
+    companion object {
+        private const val TAG = "Speaker"
+        val DEFAULT_LOCALE: Locale = Locale.forLanguageTag("en-IN")
+        const val DEFAULT_PITCH: Float = 1.08f
     }
 }

@@ -27,7 +27,7 @@ class PhrasesListActivity : ListScreenActivity() {
         val locale = when (language) {
             "tamil" -> Locale.forLanguageTag("ta-IN")
             "hindi" -> Locale.forLanguageTag("hi-IN")
-            else -> Locale.ENGLISH
+            else -> Locale.forLanguageTag("en-IN")
         }
 
         lifecycleScope.launch {
@@ -57,7 +57,7 @@ class PhrasesListActivity : ListScreenActivity() {
                         getString(R.string.voice_language_missing, titleText),
                         Toast.LENGTH_LONG
                     ).show()
-                    speaker.speak(phrase.roman, Locale.ENGLISH)
+                    speaker.speak(phrase.roman, Locale.forLanguageTag("en-IN"))
                 }
             }
         }

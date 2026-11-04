@@ -133,7 +133,7 @@ class VoiceCheckActivity : AppCompatActivity() {
             speaker.hasFailed -> "❌ Speech engine not available or English voice data missing"
             else -> "⏳ Starting speech engine…"
         }
-        lines += languageLine("English voice", Locale.ENGLISH)
+        lines += languageLine("English voice", Locale.forLanguageTag("en-IN"))
         lines += languageLine("Tamil voice", Locale.forLanguageTag("ta-IN"))
         lines += languageLine("Hindi voice", Locale.forLanguageTag("hi-IN"))
         lines += if (micGranted) "✅ Microphone permission granted" else "⚠️ Microphone permission not granted yet"
