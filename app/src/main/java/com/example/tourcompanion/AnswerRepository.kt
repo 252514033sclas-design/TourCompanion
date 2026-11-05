@@ -7,30 +7,46 @@ import kotlinx.coroutines.withContext
 
 /**
  * One place that decides how a question is answered:
- *   1. Backend answer first when available (ask.php connected to MySQL travel_tips & query_logs)
- *   2. Existing SmallTalk responses where appropriate (greetings, thanks, who are you)
- *   3. Local SQLite/KnowledgeBase fallback when the backend is unavailable or returns no specific tip
- *   4. Graceful offline behavior
+ *   1. Explicit transport intent: static Chennai public transport data via TransportRepository
+ *   2. Backend answer first when available (ask.php connected to MySQL travel_tips, destinations, query_logs)
+ *   3. Existing SmallTalk responses where appropriate (greetings, thanks, who are you)
+ *   4. Local SQLite/KnowledgeBase fallback when the backend is unavailable or returns no specific tip
+ *   5. Graceful offline behavior
  */
-class AnswerRepository(context: Context) {
+class AnswerRepository(
+    context: Context,
+    private val transport: TransportRepository = AppServices.transportRepository(context.applicationContext),
+    private val remote: AiAnswerClient = AiAnswerClient(AppConfig.AI_PROXY_URL),
+    private val local: QueryProcessor = AppServices.queryProcessor(context.applicationContext)
+) {
 
-    enum class Source { BACKEND, LOCAL, SMALL_TALK, NONE }
+    enum class Source { BACKEND, LOCAL, SMALL_TALK, NONE, TRANSPORT }
 
     data class Answer(val text: String, val source: Source)
 
     private val appContext = context.applicationContext
-    private val local = AppServices.queryProcessor(appContext)
-    private val remote = AiAnswerClient(AppConfig.AI_PROXY_URL)
 
-    suspend fun answer(question: String): Answer {
+    suspend fun answer(question: String, userLat: Double? = null, userLon: Double? = null): Answer {
         val trimmed = question.trim()
         if (trimmed.isEmpty()) {
             return Answer(appContext.getString(R.string.type_question_first), Source.NONE)
         }
 
+        // 1. Explicit Transport Intent (Deterministic, static GTFS data)
+        val transportIntent = local.detectTransportIntent(trimmed)
+        if (transportIntent.subIntent != TransportSubIntent.NONE) {
+            val transportAnswer = local.processTransportQuery(
+                intent = transportIntent,
+                repository = transport,
+                userLat = userLat,
+                userLon = userLon
+            )
+            return Answer(transportAnswer, Source.TRANSPORT)
+        }
+
         val userId = if (Session.isLoggedIn(appContext)) Session.userId(appContext) else 0L
 
-        // 1. Backend answer first when available (records query in MySQL query_logs)
+        // 2. Backend answer first when available (records query in MySQL query_logs)
         val backendResult = remote.ask(trimmed, userId)
         if (backendResult != null) {
             Log.d("AnswerRepository", "Backend returned: topic=${backendResult.topic}, specific=${backendResult.isSpecificTip}")
@@ -57,7 +73,7 @@ class AnswerRepository(context: Context) {
             return Answer(backendResult.answer, Source.BACKEND)
         }
 
-        // 2. Local fallback when backend is unavailable (offline, network error, timeout):
+        // 3. Local fallback when backend is unavailable (offline, network error, timeout):
         Log.d("AnswerRepository", "Backend unavailable; using local fallback for '$trimmed'")
 
         // SmallTalk

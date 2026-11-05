@@ -52,6 +52,21 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var speaker: Speaker
     private lateinit var repository: AnswerRepository
+    private lateinit var locationProvider: AppLocationManager
+    private var pendingQuestion: String? = null
+
+    private val locationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val question = pendingQuestion
+            pendingQuestion = null
+            if (question.isNullOrBlank()) return@registerForActivityResult
+
+            val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+
+            val coords = if (granted) locationProvider.getLastKnownCoordinates() else null
+            executeQuestionAnswer(question, coords?.first, coords?.second)
+        }
 
     private val microphonePermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -96,6 +111,7 @@ class MainActivity : AppCompatActivity() {
 
         repository = AnswerRepository(this)
         speaker = Speaker(this, saathiView)
+        locationProvider = AppServices.locationProvider(this)
 
         // Ask: answer here if something is typed, otherwise open the full Ask screen.
         askButton.setOnClickListener {
@@ -418,6 +434,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun answerQuestion(question: String) {
+        val intent = QueryProcessor.detectTransportIntent(question)
+        if (intent.subIntent == TransportSubIntent.TRANSPORT_NEARBY) {
+            if (locationProvider.hasLocationPermission()) {
+                val coords = locationProvider.getLastKnownCoordinates()
+                executeQuestionAnswer(question, coords?.first, coords?.second)
+            } else {
+                pendingQuestion = question
+                locationPermissionLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                )
+            }
+        } else {
+            executeQuestionAnswer(question, null, null)
+        }
+    }
+
+    private fun executeQuestionAnswer(question: String, userLat: Double?, userLon: Double?) {
 
         hideKeyboard()
         answerText.text = getString(R.string.thinking)
@@ -426,7 +462,7 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             try {
-                val answer = repository.answer(question)
+                val answer = repository.answer(question, userLat, userLon)
                 answerText.text = answer.text
                 if (!speaker.speak(answer.text)) {
                     saathiView.setState(SaathiView.State.IDLE)

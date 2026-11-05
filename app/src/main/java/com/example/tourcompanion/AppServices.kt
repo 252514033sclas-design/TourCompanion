@@ -20,6 +20,12 @@ object AppServices {
     @Volatile
     private var safety: SafetyRepository? = null
 
+    @Volatile
+    private var transport: TransportRepository? = null
+
+    @Volatile
+    private var location: AppLocationManager? = null
+
     fun userRepository(context: Context): UserRepository =
         users ?: synchronized(this) {
             users ?: UserRepository(context.applicationContext).also { users = it }
@@ -43,5 +49,15 @@ object AppServices {
     fun safetyRepository(context: Context): SafetyRepository =
         safety ?: synchronized(this) {
             safety ?: SafetyRepository(context.applicationContext).also { safety = it }
+        }
+
+    fun transportRepository(context: Context): TransportRepository =
+        transport ?: synchronized(this) {
+            transport ?: TransportRepository(context.applicationContext).also { transport = it }
+        }
+
+    fun locationProvider(context: Context): AppLocationManager =
+        location ?: synchronized(this) {
+            location ?: AppLocationManager(context.applicationContext).also { location = it }
         }
 }
