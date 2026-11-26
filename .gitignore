@@ -18,3 +18,12 @@ local.properties
 backend/node_modules
 *.jks
 *.keystore
+
+# Presentation scratch and rendering artifacts
+rendered_corrected/
+rendered_original/
+unpacked_pptx/
+extracted_slides.json
+slides_summary.txt
+apply_all_fixes.ps1
+fine_tuning.ps1

@@ -456,12 +456,150 @@ if ($hasTransportNearby) {
 }
 
 // ==========================================================================
+// 4️⃣b DESTINATION_DISCOVERY
+//     Generic discovery of verified Chennai destinations.
+//     Must execute BEFORE NEARBY_ATTRACTIONS so generic questions like
+//     "What places can I visit in Chennai?" do NOT require GPS coordinates.
+// ==========================================================================
+$proximityCues = [
+    'near me', 'nearby', 'near by', 'near my', 'near here',
+    'around me', 'around here', 'around us', 'close to me', 'close by', 'closest'
+];
+$hasProximity = false;
+foreach ($proximityCues as $pc) {
+    if (strpos($cleanQ, $pc) !== false) {
+        $hasProximity = true;
+        break;
+    }
+}
+
+$unsupportedPlanningCues = [
+    'peaceful', 'quiet', 'calm', 'relaxing', 'romantic',
+    'hour', 'hours', 'half day', 'minute', 'minutes'
+];
+$hasUnsupportedPlanning = false;
+foreach ($unsupportedPlanningCues as $upc) {
+    if (strpos($cleanQ, $upc) !== false) {
+        $hasUnsupportedPlanning = true;
+        break;
+    }
+}
+
+$discoveryPhrases = [
+    'places to visit', 'places to see', 'places to explore', 'places to go',
+    'interesting places', 'tourist attractions', 'places in chennai',
+    'what to see', 'suggest places', 'where should i go', 'where can i go',
+    'top places', 'best places', 'tourist spots', 'must visit',
+    'sightseeing', 'what places', 'which places', 'where can i visit',
+    'what can i visit', 'places can i visit', 'explore in chennai',
+    'explore chennai', 'visit in chennai', 'visit chennai'
+];
+
+$isDiscovery = false;
+if (!$hasProximity && !$hasUnsupportedPlanning) {
+    foreach ($discoveryPhrases as $dp) {
+        if (strpos($paddedQ, " $dp ") !== false || strpos($cleanQ, $dp) !== false) {
+            $isDiscovery = true;
+            break;
+        }
+    }
+}
+
+if ($isDiscovery) {
+    $discoveryThemes = [
+        'Beach'    => "category LIKE '%Beach%'",
+        'Temple'   => "category LIKE '%Temple%'",
+        'Heritage' => "category LIKE '%Heritage%' OR category = 'Culture'",
+        'Museum'   => "category LIKE '%Museum%'",
+        'Nature'   => "category LIKE '%Nature%' OR category LIKE '%Park%' OR category = 'Botanical Garden'",
+    ];
+
+    $chosenDestinations = [];
+    $usedIds = [];
+
+    foreach ($discoveryThemes as $theme => $cond) {
+        $excludeClause = !empty($usedIds) ? " AND id NOT IN (" . implode(',', $usedIds) . ")" : "";
+        $stmt = $conn->prepare("SELECT id, name, category, area, overview 
+                                FROM destinations 
+                                WHERE is_active = 1 AND city = 'Chennai' AND ($cond)$excludeClause 
+                                ORDER BY id ASC LIMIT 1");
+        if ($stmt) {
+            $stmt->execute();
+            $row = $stmt->get_result()->fetch_assoc();
+            if ($row) {
+                $chosenDestinations[] = [
+                    'id'       => (int)$row['id'],
+                    'name'     => (string)$row['name'],
+                    'category' => (string)$row['category'],
+                    'area'     => (string)($row['area'] ?? 'Chennai'),
+                    'overview' => (string)($row['overview'] ?? '')
+                ];
+                $usedIds[] = (int)$row['id'];
+            }
+            $stmt->close();
+        }
+    }
+
+    $detLines = ["Here are verified places you can visit in Chennai:"];
+    foreach ($chosenDestinations as $d) {
+        $detLines[] = "• {$d['name']} ({$d['category']} in {$d['area']})";
+    }
+    $deterministicAnswer = implode("\n", $detLines);
+
+    // Build verified fact block for Gemma
+    $factLines = [
+        "Verified Destinations in Chennai (These are the only verified destinations available for this response. Do not add destinations that are not listed):"
+    ];
+    foreach ($chosenDestinations as $d) {
+        $factLines[] = "• {$d['name']} | Category: {$d['category']} | Area: {$d['area']} | Overview: {$d['overview']}";
+    }
+    $verifiedFactBlock = implode("\n", $factLines);
+
+    $gemmaAnswer    = null;
+    $gemmaUsed      = false;
+    $gemmaAvailable = function_exists('call_local_gemma') && function_exists('is_local_ai_available') && is_local_ai_available();
+
+    if ($gemmaAvailable && !empty($chosenDestinations)) {
+        $rawAnswer = call_local_gemma(
+            $question,
+            "Chennai Destinations",
+            $verifiedFactBlock,
+            ['timeout' => 15, 'max_tokens' => 120],
+            $history
+        );
+        if ($rawAnswer !== null && trim($rawAnswer) !== '') {
+            $gemmaAnswer = trim($rawAnswer);
+            $gemmaUsed   = true;
+        }
+    }
+
+    $finalAnswer = ($gemmaUsed && $gemmaAnswer !== null) ? $gemmaAnswer : $deterministicAnswer;
+
+    echo json_encode([
+        'success'                 => true,
+        'intent'                  => 'DESTINATION_DISCOVERY',
+        'requires_gemma'          => true,
+        'verified_info_available' => true,
+        'topic'                   => 'Chennai Destinations',
+        'verified_facts'          => [
+            'count'        => count($chosenDestinations),
+            'destinations' => $chosenDestinations
+        ],
+        'gemma_available'         => $gemmaAvailable,
+        'gemma_used'              => $gemmaUsed,
+        'answer'                  => $finalAnswer,
+        'deterministic_answer'    => $deterministicAnswer,
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+// ==========================================================================
 // 5️⃣  NEARBY_ATTRACTIONS
 // ==========================================================================
 $nearbyAttractionPhrases = [
     'places near me', 'places nearby', 'attractions near me', 'attractions nearby',
-    'what is near me', 'what are near me', 'what places', 'places to visit nearby',
-    'places to visit near me', 'what can i visit', 'nearby attractions',
+    'what is near me', 'what are near me', 'what places near me', 'places to visit nearby',
+    'places to visit near me', 'what can i visit near me', 'nearby attractions',
     'near me', 'around here', 'close to me', 'closest place', 'closest attraction',
 ];
 $hasNearbyAttractions = false;

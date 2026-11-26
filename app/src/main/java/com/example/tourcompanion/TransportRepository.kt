@@ -19,7 +19,7 @@ sealed class TransportResult<out T> {
  * Repository orchestrating static Chennai public transport data.
  * Calls TransportApiClient and exposes clean, verified domain states to the application.
  */
-class TransportRepository(
+open class TransportRepository(
     context: Context? = null,
     private val api: TransportApiClient = TransportApiClient()
 ) {
@@ -28,7 +28,7 @@ class TransportRepository(
     /**
      * Finds stops within [radiusKm] of [lat], [lon].
      */
-    suspend fun getNearbyStops(
+    open suspend fun getNearbyStops(
         lat: Double,
         lon: Double,
         radiusKm: Double = 2.0,
@@ -55,7 +55,7 @@ class TransportRepository(
     /**
      * Searches static routes by number/name/color, agency, mode, or origin/destination stops.
      */
-    suspend fun searchRoutes(
+    open suspend fun searchRoutes(
         query: String? = null,
         agency: String? = null,
         mode: String? = null,

@@ -513,6 +513,17 @@ class QueryProcessor(context: Context) {
             return cleaned
         }
 
+        fun normalizeTransitPlace(name: String?): String? {
+            if (name.isNullOrBlank()) return name
+            val trimmed = name.trim()
+            val lower = trimmed.lowercase(Locale.ROOT)
+            return when {
+                lower == "chennai rail museum" || lower == "rail museum" -> "Rail Museum"
+                lower == "government museum, egmore" || lower == "government museum" || lower == "egmore museum" -> "Egmore Musem"
+                else -> trimmed
+            }
+        }
+
         fun extractCandidateTarget(question: String): String? {
             val trimmed = question.trim()
             if (trimmed.isEmpty()) return null
@@ -669,6 +680,31 @@ class QueryProcessor(context: Context) {
 
             val (extractedOrigin, extractedDest) = extractOriginDestination(trimmed)
 
+            val tanglishModeRegex = Regex("\\b(?:bus|metro|train|subway)\\s+la\\b", RegexOption.IGNORE_CASE)
+            val hasTanglishMode = tanglishModeRegex.containsMatchIn(lower)
+
+            var origin = extractedOrigin
+            var dest = extractedDest
+
+            if (hasTanglishMode && dest == null) {
+                val tanglishFromTo = Regex("([^?.,!]+?)\\s+(?:la\\s+irun[dt]hu|lerundhu|lendhu)\\s+([^?.,!]+?)\\s+ku\\b", RegexOption.IGNORE_CASE).find(trimmed)
+                if (tanglishFromTo != null) {
+                    if (origin == null) {
+                        origin = cleanPlaceName(tanglishFromTo.groupValues[1])
+                    }
+                    dest = cleanPlaceName(tanglishFromTo.groupValues[2])
+                } else {
+                    val tanglishDestMatch = Regex("([^?.,!]+?)\\s+ku\\b", RegexOption.IGNORE_CASE).find(trimmed)
+                    if (tanglishDestMatch != null) {
+                        val candidate = tanglishDestMatch.groupValues[1]
+                            .replace(tanglishModeRegex, "")
+                            .replace(Regex("^(?:e?pdi|eppadi)\\s+", RegexOption.IGNORE_CASE), "")
+                            .trim()
+                        dest = cleanPlaceName(candidate)
+                    }
+                }
+            }
+
             if (isTiming) {
                 // If asking about metro timing
                 val metroTimingMatch = METRO_LINE_REGEX.find(trimmed)
@@ -687,8 +723,8 @@ class QueryProcessor(context: Context) {
                         subIntent = TransportSubIntent.TRANSPORT_ROUTE_TIMING,
                         target = routeCandidate,
                         mode = "bus",
-                        origin = extractedOrigin,
-                        destination = extractedDest
+                        origin = origin,
+                        destination = dest
                     )
                 }
             }
@@ -704,16 +740,28 @@ class QueryProcessor(context: Context) {
             // Explicit or standalone route code (e.g. "21G", "bus 102", "route AC-21G", "What is 5C?")
             val explicitRoute = findRouteCode(trimmed)
 
+            val hasTanglishCue = hasTanglishMode && (
+                dest != null || origin != null ||
+                lower.contains("take") || lower.contains("use") || lower.contains("catch") ||
+                lower.contains("get to") || lower.contains("go to") || lower.contains("travel to") ||
+                lower.contains("epdi") || lower.contains("eppadi") ||
+                lower.contains("poganum") || lower.contains("poga") ||
+                lower.contains("porathu") || lower.contains("reach") ||
+                DIRECTIONS_TANGLISH.any { lower.contains(it) } ||
+                DIRECTIONS_TANGLISH_REGEX.containsMatchIn(lower)
+            )
+
             // Natural transit route query patterns
             val isTransitRouteQuery =
                 explicitRoute != null ||
+                hasTanglishCue ||
                 lower.contains("which bus") || lower.contains("what bus") ||
                 lower.contains("which metro") || lower.contains("what metro") ||
                 lower.contains("which route") || lower.contains("what route") ||
                 lower.contains("by bus") || lower.contains("by metro") ||
                 lower.contains("by subway") || lower.contains("by train") ||
                 ((lower.contains("bus") || lower.contains("metro") || lower.contains("subway") || lower.contains("train")) &&
-                 (extractedOrigin != null || extractedDest != null ||
+                 (origin != null || dest != null ||
                   lower.contains("take") || lower.contains("use") || lower.contains("catch") || lower.contains("get to") || lower.contains("go to") || lower.contains("travel to")))
 
             if (isTransitRouteQuery) {
@@ -727,8 +775,8 @@ class QueryProcessor(context: Context) {
                     subIntent = TransportSubIntent.TRANSPORT_ROUTE_SEARCH,
                     target = explicitRoute,
                     mode = mode,
-                    origin = extractedOrigin,
-                    destination = extractedDest
+                    origin = origin,
+                    destination = dest
                 )
             }
 
@@ -776,6 +824,7 @@ class QueryProcessor(context: Context) {
             "top places", "best places", "tourist spots", "must visit",
             "sightseeing", "what places", "which places", "good places",
             "famous places", "popular places", "where can i visit",
+            "places to explore", "interesting places",
             "visit a", "explore a"
         )
 
@@ -1268,11 +1317,13 @@ class QueryProcessor(context: Context) {
                         return "Based on the available Chennai transport data, please specify a route number or name to search (e.g. 5C, 21G, or Blue Line)."
                     }
                     val searchQuery = if (!intent.target.isNullOrBlank()) intent.target else null
+                    val originParam = normalizeTransitPlace(intent.origin)
+                    val destParam = normalizeTransitPlace(intent.destination)
                     when (val res = repository.searchRoutes(
                         query = searchQuery,
                         mode = intent.mode,
-                        origin = intent.origin,
-                        destination = intent.destination
+                        origin = originParam,
+                        destination = destParam
                     )) {
                         is TransportResult.Success -> {
                             val routes = res.data
@@ -1286,32 +1337,82 @@ class QueryProcessor(context: Context) {
                                 }
                                 "Based on the available Chennai transport data, no routes matching $targetName were found."
                             } else {
-                                val limit = routes.take(5)
-                                val routesList = limit.joinToString("\n") { r ->
-                                    val modeStr = when (r.routeType) {
-                                        1 -> "Metro"
-                                        2 -> "Rail"
-                                        3 -> "Bus"
-                                        else -> "Transit"
-                                    }
-                                    val agencyStr = r.agencyName?.let { " - $it" } ?: ""
-                                    "• Route ${r.routeShortName}: ${r.routeLongName} [$modeStr]$agencyStr"
-                                }
-                                val moreNote = if (routes.size > 5) {
-                                    "\n(Showing 5 of ${routes.size} variants found in the static schedule database. Note: Schedules and real-time arrivals are not included in this static dataset.)"
+                                val firstTransfer = routes.firstOrNull()?.transferJourney
+                                if (firstTransfer != null) {
+                                    val leg1 = firstTransfer.leg1
+                                    val leg2 = firstTransfer.leg2
+                                    val xferStop = firstTransfer.transferStopName.ifBlank { firstTransfer.transferStopId }
+
+                                    val r1Raw = leg1.routeShortName.trim()
+                                    val r1 = if (r1Raw.startsWith("Bus ", ignoreCase = true)) r1Raw.substring(4).trim() else r1Raw
+                                    val leg1RouteName = r1.ifBlank { leg1.routeLongName.ifBlank { leg1.routeId } }
+
+                                    val r2Raw = leg2.routeShortName.trim()
+                                    val r2 = if (r2Raw.startsWith("Bus ", ignoreCase = true)) r2Raw.substring(4).trim() else r2Raw
+                                    val leg2RouteName = r2.ifBlank { leg2.routeLongName.ifBlank { leg2.routeId } }
+
+                                    val b1Stop = leg1.boardStopName.ifBlank { leg1.boardStopId }
+                                    val a1Stop = leg1.alightStopName.ifBlank { leg1.alightStopId }
+                                    val a2Stop = leg2.alightStopName.ifBlank { leg2.alightStopId }
+
+                                    "No direct bus was found. You can take a 2-bus route:\n\n" +
+                                        "1. Board Bus $leg1RouteName at $b1Stop and get down at $a1Stop.\n" +
+                                        "2. At $xferStop, change to Bus $leg2RouteName and get down at $a2Stop."
                                 } else {
-                                    "\n(Static route listing from Chennai public transport data. Note: Live tracking and real-time ETAs are not included.)"
+                                    val firstRoute = routes.first()
+                                    val isMetroOrSubway = firstRoute.routeType == 1 ||
+                                        intent.mode.equals("subway", ignoreCase = true) ||
+                                        intent.mode.equals("metro", ignoreCase = true)
+                                    val hasBoardAndAlight = !firstRoute.boardStopName.isNullOrBlank() &&
+                                        !firstRoute.alightStopName.isNullOrBlank()
+
+                                    if (!isMetroOrSubway && firstRoute.routeType == 3 && hasBoardAndAlight) {
+                                        val dirSuffix = when {
+                                            !firstRoute.headsign.isNullOrBlank() -> " toward ${firstRoute.headsign.trim()}"
+                                            firstRoute.routeLongName.contains(Regex("\\s+(?:TO|to)\\s+")) -> {
+                                                val parts = firstRoute.routeLongName.split(Regex("\\s+(?:TO|to)\\s+"))
+                                                if (parts.size == 2 && parts[1].isNotBlank()) " toward ${parts[1].trim()}" else ""
+                                            }
+                                            else -> ""
+                                        }
+                                        val rRaw = firstRoute.routeShortName.trim()
+                                        val rClean = if (rRaw.startsWith("Bus ", ignoreCase = true)) rRaw.substring(4).trim() else rRaw
+                                        val busName = rClean.ifBlank { firstRoute.routeLongName.ifBlank { firstRoute.routeId } }
+                                        val boardStop = firstRoute.boardStopName!!.trim().trimEnd('.')
+                                        val alightStop = firstRoute.alightStopName!!.trim().trimEnd('.')
+
+                                        "You can take Bus $busName$dirSuffix.\n\n" +
+                                            "Board at $boardStop\n" +
+                                            "and get down at $alightStop."
+                                    } else {
+                                        val limit = routes.take(5)
+                                        val routesList = limit.joinToString("\n") { r ->
+                                            val modeStr = when (r.routeType) {
+                                                1 -> "Metro"
+                                                2 -> "Rail"
+                                                3 -> "Bus"
+                                                else -> "Transit"
+                                            }
+                                            val agencyStr = r.agencyName?.let { " - $it" } ?: ""
+                                            "• Route ${r.routeShortName}: ${r.routeLongName} [$modeStr]$agencyStr"
+                                        }
+                                        val moreNote = if (routes.size > 5) {
+                                            "\n(Showing 5 of ${routes.size} variants found in the static schedule database. Note: Schedules and real-time arrivals are not included in this static dataset.)"
+                                        } else {
+                                            "\n(Static route listing from Chennai public transport data. Note: Live tracking and real-time ETAs are not included.)"
+                                        }
+                                        val heading = when {
+                                            !intent.target.isNullOrBlank() -> "matching routes for '$query':"
+                                            !intent.origin.isNullOrBlank() && !intent.destination.isNullOrBlank() ->
+                                                "verified direct routes from ${intent.origin} to ${intent.destination}:"
+                                            !intent.origin.isNullOrBlank() -> "matching routes serving '${intent.origin}':"
+                                            !intent.destination.isNullOrBlank() -> "matching routes serving '${intent.destination}':"
+                                            intent.mode != null -> "matching ${intent.mode} routes:"
+                                            else -> "matching routes for '$query':"
+                                        }
+                                        "Based on the available Chennai transport data, $heading\n$routesList$moreNote"
+                                    }
                                 }
-                                val heading = when {
-                                    !intent.target.isNullOrBlank() -> "matching routes for '$query':"
-                                    !intent.origin.isNullOrBlank() && !intent.destination.isNullOrBlank() ->
-                                        "verified direct routes from ${intent.origin} to ${intent.destination}:"
-                                    !intent.origin.isNullOrBlank() -> "matching routes serving '${intent.origin}':"
-                                    !intent.destination.isNullOrBlank() -> "matching routes serving '${intent.destination}':"
-                                    intent.mode != null -> "matching ${intent.mode} routes:"
-                                    else -> "matching routes for '$query':"
-                                }
-                                "Based on the available Chennai transport data, $heading\n$routesList$moreNote"
                             }
                         }
                         is TransportResult.Empty -> {

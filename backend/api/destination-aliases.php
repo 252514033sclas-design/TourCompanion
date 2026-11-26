@@ -163,10 +163,26 @@ function resolveAliasMatch(string $rawQuery, array $aliases, mysqli $conn): ?arr
         $lowerAlias = mb_strtolower($normAlias, 'UTF-8');
         if ($lowerAlias === '') continue;
 
-        // Boundary match: check if $normAlias appears surrounded by word boundaries, spaces, or punctuation
         $escaped = preg_quote($lowerAlias, '/');
+
+        // Boundary-safe Tamil morphological suffix support (locative, dative, accusative, genitive)
+        $isTamil = ($a['language'] === 'ta') || preg_match('/\p{Tamil}/u', $normAlias);
+        if ($isTamil) {
+            if (str_ends_with($lowerAlias, 'ம்')) {
+                $stem = preg_replace('/ம்$/u', '', $lowerAlias);
+                $escapedStem = preg_quote($stem, '/');
+                $mSuffixes = '(?:த்தில்|த்துக்கு|த்தை|த்தின்|த்துல|த்தோடு|த்துடன்|த்தால்)';
+                $aliasPattern = '(?:' . $escaped . '|' . $escapedStem . $mSuffixes . ')';
+            } else {
+                $directSuffixes = '(?:க்கு|வுக்கு|உக்கு|இல்|வில்|யில்|ல்|ஐ|வை|யை|இன்|வின்|யின்|ல)';
+                $aliasPattern = $escaped . '(?:' . $directSuffixes . ')?';
+            }
+        } else {
+            $aliasPattern = $escaped;
+        }
+
         // Match at word/token boundary
-        if (preg_match('/(?:\b|[\s\p{P}]|^)' . $escaped . '(?:\b|[\s\p{P}]|$)/u', $lowerQuery)) {
+        if (preg_match('/(?:\b|[\s\p{P}]|^)' . $aliasPattern . '(?:\b|[\s\p{P}]|$)/u', $lowerQuery)) {
             $phraseMatches[] = [
                 'destination_id' => $a['destination_id'],
                 'canonical_name' => $a['destination_name'],

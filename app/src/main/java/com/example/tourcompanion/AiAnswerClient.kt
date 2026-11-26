@@ -21,11 +21,11 @@ data class BackendAnswer(
 )
 
 /**
- * Communicates with the PHP backend (ask.php).
+ * Communicates with the PHP backend (query.php).
  * Returns null on network errors, timeouts, or invalid responses to trigger fallback.
  */
 class AiAnswerClient(
-    private val endpoint: String = AppConfig.AI_PROXY_URL,
+    private val endpoint: String = AppConfig.QUERY_URL,
     nearbyUrl: String? = null,
     distanceUrl: String? = null
 ) {
@@ -33,13 +33,17 @@ class AiAnswerClient(
     val isConfigured: Boolean
         get() = endpoint.isNotBlank()
 
-    private val nearbyEndpoint: String = nearbyUrl ?: if (endpoint.contains("ask.php")) {
+    private val nearbyEndpoint: String = nearbyUrl ?: if (endpoint.contains("query.php")) {
+        endpoint.replace("query.php", "destinations-nearby.php")
+    } else if (endpoint.contains("ask.php")) {
         endpoint.replace("ask.php", "destinations-nearby.php")
     } else {
         AppConfig.DESTINATIONS_NEARBY_URL
     }
 
-    private val distanceEndpoint: String = distanceUrl ?: if (endpoint.contains("ask.php")) {
+    private val distanceEndpoint: String = distanceUrl ?: if (endpoint.contains("query.php")) {
+        endpoint.replace("query.php", "destinations-distance.php")
+    } else if (endpoint.contains("ask.php")) {
         endpoint.replace("ask.php", "destinations-distance.php")
     } else {
         AppConfig.DESTINATIONS_DISTANCE_URL
@@ -117,24 +121,44 @@ class AiAnswerClient(
                 Log.d("AiAnswerClient", "ASK response: $text")
 
                 val json = JSONObject(text)
-                if (json.optString("status") != "ok") {
+                val isSuccess = json.optBoolean("success", false) || json.optString("status") == "ok"
+                if (!isSuccess) {
                     return@use null
                 }
 
-                val answer = json.optString("answer").trim()
+                var answer = if (json.has("answer") && !json.isNull("answer")) {
+                    json.optString("answer").trim()
+                } else ""
+
+                if (answer.isEmpty() && json.has("deterministic_answer") && !json.isNull("deterministic_answer")) {
+                    answer = json.optString("deterministic_answer").trim()
+                }
+
+                if (answer.isEmpty() && json.has("verified_facts") && !json.isNull("verified_facts")) {
+                    val facts = json.optJSONObject("verified_facts")
+                    if (facts != null) {
+                        val overview = facts.optString("overview").trim()
+                        if (overview.isNotEmpty()) {
+                            answer = overview
+                        }
+                    }
+                }
+
                 if (answer.isEmpty()) return@use null
 
                 val topic = if (json.has("topic") && !json.isNull("topic")) {
                     json.optString("topic").trim().ifEmpty { null }
+                } else if (json.has("intent") && !json.isNull("intent")) {
+                    json.optString("intent").trim().ifEmpty { null }
                 } else null
 
-                val isAi = json.optBoolean("ai_generated", false)
+                val isAi = json.optBoolean("gemma_used", false) || json.optBoolean("ai_generated", false)
 
                 BackendAnswer(
                     question = json.optString("question", trimmed),
                     topic = topic,
                     answer = answer,
-                    isSpecificTip = topic != null,
+                    isSpecificTip = topic != null || json.optBoolean("verified_info_available", false),
                     isAiGenerated = isAi
                 )
             }

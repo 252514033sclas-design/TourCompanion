@@ -121,8 +121,74 @@ class TransportApiClient(private val baseUrl: String = AppConfig.BASE_URL) {
     }
 
     private fun parseRoutes(json: JSONObject): List<TransportRoute> {
-        val dataArray = json.optJSONArray("data") ?: return emptyList()
+        val isTransfer = json.optBoolean("is_transfer", false)
+        val dataArray = json.optJSONArray("journeys") ?: json.optJSONArray("data") ?: json.optJSONArray("routes") ?: return emptyList()
         val routes = ArrayList<TransportRoute>(dataArray.length())
+
+        if (isTransfer) {
+            for (i in 0 until dataArray.length()) {
+                val item = dataArray.getJSONObject(i)
+                val leg1Obj = item.optJSONObject("leg_1")
+                val leg2Obj = item.optJSONObject("leg_2")
+                val xferStopObj = item.optJSONObject("transfer_stop")
+
+                if (leg1Obj != null && leg2Obj != null) {
+                    val leg1 = TransportLeg(
+                        routeId = leg1Obj.optString("route_id"),
+                        routeShortName = leg1Obj.optString("route_short_name"),
+                        routeLongName = leg1Obj.optString("route_long_name"),
+                        directionId = leg1Obj.optInt("direction_id", 0),
+                        boardStopId = leg1Obj.optString("board_stop_id"),
+                        boardStopName = leg1Obj.optString("board_stop_name"),
+                        boardStopSequence = leg1Obj.optInt("board_stop_sequence", 0),
+                        alightStopId = leg1Obj.optString("alight_stop_id"),
+                        alightStopName = leg1Obj.optString("alight_stop_name"),
+                        alightStopSequence = leg1Obj.optInt("alight_stop_sequence", 0),
+                        hops = leg1Obj.optInt("hops", 0)
+                    )
+
+                    val transferStopId = xferStopObj?.optString("stop_id") ?: item.optString("transfer_stop_id", "")
+                    val transferStopName = xferStopObj?.optString("stop_name") ?: item.optString("transfer_stop_name", "")
+
+                    val leg2 = TransportLeg(
+                        routeId = leg2Obj.optString("route_id"),
+                        routeShortName = leg2Obj.optString("route_short_name"),
+                        routeLongName = leg2Obj.optString("route_long_name"),
+                        directionId = leg2Obj.optInt("direction_id", 0),
+                        boardStopId = leg2Obj.optString("board_stop_id"),
+                        boardStopName = leg2Obj.optString("board_stop_name"),
+                        boardStopSequence = leg2Obj.optInt("board_stop_sequence", 0),
+                        alightStopId = leg2Obj.optString("alight_stop_id"),
+                        alightStopName = leg2Obj.optString("alight_stop_name"),
+                        alightStopSequence = leg2Obj.optInt("alight_stop_sequence", 0),
+                        hops = leg2Obj.optInt("hops", 0)
+                    )
+
+                    val totalHops = item.optInt("total_hops", leg1.hops + leg2.hops)
+                    val journey = TransferJourney(
+                        leg1 = leg1,
+                        transferStopId = transferStopId,
+                        transferStopName = transferStopName,
+                        leg2 = leg2,
+                        totalHops = totalHops,
+                        isTransfer = true
+                    )
+
+                    routes.add(
+                        TransportRoute(
+                            routeId = leg1.routeId,
+                            agencyId = "69",
+                            agencyName = "MTC",
+                            routeShortName = leg1.routeShortName,
+                            routeLongName = "${leg1.routeShortName} -> ${leg2.routeShortName} via $transferStopName",
+                            routeType = 3,
+                            transferJourney = journey
+                        )
+                    )
+                }
+            }
+            return routes
+        }
 
         for (i in 0 until dataArray.length()) {
             val item = dataArray.getJSONObject(i)
@@ -157,6 +223,54 @@ class TransportApiClient(private val baseUrl: String = AppConfig.BASE_URL) {
                 item.optString("route_text_color")
             }
 
+            val boardStopId = when {
+                !item.isNull("board_stop_id") && item.optString("board_stop_id").isNotBlank() -> item.optString("board_stop_id")
+                !item.isNull("boarding_stop_id") && item.optString("boarding_stop_id").isNotBlank() -> item.optString("boarding_stop_id")
+                else -> null
+            }
+
+            val boardStopName = when {
+                !item.isNull("board_stop_name") && item.optString("board_stop_name").isNotBlank() -> item.optString("board_stop_name")
+                !item.isNull("boarding_stop_name") && item.optString("boarding_stop_name").isNotBlank() -> item.optString("boarding_stop_name")
+                !item.isNull("boarding_stop") && item.optString("boarding_stop").isNotBlank() -> item.optString("boarding_stop")
+                !item.isNull("board_stop") && item.optString("board_stop").isNotBlank() -> item.optString("board_stop")
+                else -> null
+            }
+
+            val boardStopSequence = when {
+                item.has("board_stop_sequence") && !item.isNull("board_stop_sequence") -> item.optInt("board_stop_sequence")
+                item.has("boarding_stop_sequence") && !item.isNull("boarding_stop_sequence") -> item.optInt("boarding_stop_sequence")
+                else -> null
+            }
+
+            val alightStopId = when {
+                !item.isNull("alight_stop_id") && item.optString("alight_stop_id").isNotBlank() -> item.optString("alight_stop_id")
+                !item.isNull("alighting_stop_id") && item.optString("alighting_stop_id").isNotBlank() -> item.optString("alighting_stop_id")
+                else -> null
+            }
+
+            val alightStopName = when {
+                !item.isNull("alight_stop_name") && item.optString("alight_stop_name").isNotBlank() -> item.optString("alight_stop_name")
+                !item.isNull("alighting_stop_name") && item.optString("alighting_stop_name").isNotBlank() -> item.optString("alighting_stop_name")
+                !item.isNull("alighting_stop") && item.optString("alighting_stop").isNotBlank() -> item.optString("alighting_stop")
+                !item.isNull("alight_stop") && item.optString("alight_stop").isNotBlank() -> item.optString("alight_stop")
+                else -> null
+            }
+
+            val alightStopSequence = when {
+                item.has("alight_stop_sequence") && !item.isNull("alight_stop_sequence") -> item.optInt("alight_stop_sequence")
+                item.has("alighting_stop_sequence") && !item.isNull("alighting_stop_sequence") -> item.optInt("alighting_stop_sequence")
+                else -> null
+            }
+
+            val headsign = when {
+                !item.isNull("headsign") && item.optString("headsign").isNotBlank() -> item.optString("headsign")
+                !item.isNull("trip_headsign") && item.optString("trip_headsign").isNotBlank() -> item.optString("trip_headsign")
+                else -> null
+            }
+
+            val directionId = if (item.has("direction_id") && !item.isNull("direction_id")) item.optInt("direction_id") else null
+
             routes.add(
                 TransportRoute(
                     routeId = item.optString("route_id"),
@@ -167,7 +281,15 @@ class TransportApiClient(private val baseUrl: String = AppConfig.BASE_URL) {
                     routeType = item.optInt("route_type", 3),
                     routeDesc = routeDesc,
                     routeColor = routeColor,
-                    routeTextColor = routeTextColor
+                    routeTextColor = routeTextColor,
+                    boardStopId = boardStopId,
+                    boardStopName = boardStopName,
+                    boardStopSequence = boardStopSequence,
+                    alightStopId = alightStopId,
+                    alightStopName = alightStopName,
+                    alightStopSequence = alightStopSequence,
+                    headsign = headsign,
+                    directionId = directionId
                 )
             )
         }

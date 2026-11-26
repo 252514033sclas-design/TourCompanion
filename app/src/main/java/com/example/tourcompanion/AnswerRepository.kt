@@ -12,14 +12,14 @@ import java.util.Locale
  *   2. Explicit transport intent (static Chennai GTFS + dynamic MTC scheduled timing)
  *   3. Small talk (instant local response, no network overhead)
  *   4. Location-dependent intents (NEARBY_ATTRACTIONS, DISTANCE_DIRECTIONS, LOST_DISORIENTED - Phase 5 flags only)
- *   5. Destination & knowledge queries via backend ask.php (MySQL verified facts + local Gemma synthesis)
+ *   5. Destination & knowledge queries via backend query.php (MySQL verified facts + local Gemma synthesis)
  *   6. Local SQLite / KnowledgeBase fallback when backend is unavailable
  *   7. Graceful offline behavior
  */
 class AnswerRepository(
     context: Context,
     private val transport: TransportRepository = AppServices.transportRepository(context.applicationContext),
-    private val remote: AiAnswerClient = AiAnswerClient(AppConfig.AI_PROXY_URL),
+    private val remote: AiAnswerClient = AiAnswerClient(AppConfig.QUERY_URL),
     private val local: QueryProcessor = AppServices.queryProcessor(context.applicationContext),
     private val location: AppLocationManager = AppServices.locationProvider(context.applicationContext)
 ) {
@@ -222,7 +222,7 @@ class AnswerRepository(
             0L
         }
 
-        // Backend answer first when available (ask.php connected to verified MySQL destinations/tips + Gemma synthesis)
+        // Backend answer first when available (query.php connected to verified MySQL destinations/facts + Gemma synthesis)
         val backendResult = remote.ask(effectiveQuestion, userId, conversationHistory = conversationHistory)
         if (backendResult != null) {
             Log.d("AnswerRepository", "Backend returned: topic=${backendResult.topic}, specific=${backendResult.isSpecificTip}, ai=${backendResult.isAiGenerated}")

@@ -228,15 +228,142 @@ try {
         $data = formatRouteRows($stmt->get_result());
         $stmt->close();
 
-        $response = [
-            "status" => "success",
-            "count" => count($data),
-            "data" => $data
-        ];
-        if (empty($data)) {
-            $response["message"] = "I couldn't find a verified direct route between those locations in my transport data.";
+        if (!empty($data)) {
+            echo json_encode([
+                "status" => "success",
+                "count" => count($data),
+                "is_transfer" => false,
+                "data" => $data
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            exit;
         }
-        echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        // Direct routes is 0: Check if 2-leg MTC bus transfer query can be executed
+        $agencyUpper = strtoupper($agencyParam);
+        $allowsBus = ($routeType === null || $routeType === 3);
+        $allowsMtc = ($agencyParam === '' || $agencyUpper === '69' || $agencyUpper === 'MTC');
+
+        if ($allowsBus && $allowsMtc) {
+            $sqlXfer = "SELECT 
+                            rA.route_id AS routeA_id, rA.route_short_name AS routeA_short, rA.route_long_name AS routeA_long,
+                            origA.direction_id AS dirA,
+                            origA.stop_id AS boardA_stop_id, s_orig.stop_name AS boardA_stop_name, origA.stop_sequence AS boardA_seq,
+                            xferA.stop_id AS xfer_stop_id, s_xfer.stop_name AS xfer_stop_name, xferA.stop_sequence AS xferA_seq,
+                            (xferA.stop_sequence - origA.stop_sequence) AS hopsA,
+
+                            rB.route_id AS routeB_id, rB.route_short_name AS routeB_short, rB.route_long_name AS routeB_long,
+                            xferB.direction_id AS dirB,
+                            xferB.stop_sequence AS boardB_seq,
+                            destB.stop_id AS alightB_stop_id, s_dest.stop_name AS alightB_stop_name, destB.stop_sequence AS alightB_seq,
+                            (destB.stop_sequence - xferB.stop_sequence) AS hopsB,
+
+                            ((xferA.stop_sequence - origA.stop_sequence) + (destB.stop_sequence - xferB.stop_sequence)) AS total_hops
+
+                        FROM transport_route_stops origA
+                        JOIN transport_route_stops xferA 
+                          ON origA.route_id = xferA.route_id 
+                         AND origA.direction_id = xferA.direction_id 
+                         AND origA.stop_sequence < xferA.stop_sequence
+
+                        JOIN transport_route_stops xferB 
+                          ON xferA.stop_id = xferB.stop_id
+                         AND xferB.route_id != xferA.route_id
+
+                        JOIN transport_route_stops destB 
+                          ON xferB.route_id = destB.route_id 
+                         AND xferB.direction_id = destB.direction_id 
+                         AND xferB.stop_sequence < destB.stop_sequence
+
+                        JOIN transport_routes rA ON rA.route_id = origA.route_id
+                        JOIN transport_routes rB ON rB.route_id = xferB.route_id
+
+                        JOIN transport_stops s_orig ON s_orig.stop_id = origA.stop_id
+                        JOIN transport_stops s_xfer ON s_xfer.stop_id = xferA.stop_id
+                        JOIN transport_stops s_dest ON s_dest.stop_id = destB.stop_id
+
+                        WHERE origA.stop_id IN ($phOrig)
+                          AND destB.stop_id IN ($phDest)
+                          AND rA.route_type = 3
+                          AND rB.route_type = 3
+                        ORDER BY total_hops ASC, hopsA ASC, rA.route_short_name ASC, rB.route_short_name ASC, s_xfer.stop_name ASC
+                        LIMIT 50";
+
+            $stmtXfer = $conn->prepare($sqlXfer);
+            if ($stmtXfer) {
+                $xferParams = array_merge($origStopIds, $destStopIds);
+                $xferTypes = str_repeat('s', count($xferParams));
+                $stmtXfer->bind_param($xferTypes, ...$xferParams);
+                $stmtXfer->execute();
+                $xferRows = $stmtXfer->get_result()->fetch_all(MYSQLI_ASSOC);
+                $stmtXfer->close();
+
+                $transferJourneys = [];
+                $seenCombinations = [];
+                foreach ($xferRows as $xr) {
+                    $comboKey = $xr['routeA_short'] . '|' . $xr['dirA'] . '|' . $xr['xfer_stop_id'] . '|' . $xr['routeB_short'] . '|' . $xr['dirB'];
+                    if (isset($seenCombinations[$comboKey])) {
+                        continue;
+                    }
+                    $seenCombinations[$comboKey] = true;
+
+                    $transferJourneys[] = [
+                        "type" => "two_leg_transfer",
+                        "leg_1" => [
+                            "route_id" => (string)$xr['routeA_id'],
+                            "route_short_name" => (string)$xr['routeA_short'],
+                            "route_long_name" => (string)$xr['routeA_long'],
+                            "direction_id" => (int)$xr['dirA'],
+                            "board_stop_id" => (string)$xr['boardA_stop_id'],
+                            "board_stop_name" => (string)$xr['boardA_stop_name'],
+                            "board_stop_sequence" => (int)$xr['boardA_seq'],
+                            "alight_stop_id" => (string)$xr['xfer_stop_id'],
+                            "alight_stop_name" => (string)$xr['xfer_stop_name'],
+                            "alight_stop_sequence" => (int)$xr['xferA_seq'],
+                            "hops" => (int)$xr['hopsA']
+                        ],
+                        "transfer_stop" => [
+                            "stop_id" => (string)$xr['xfer_stop_id'],
+                            "stop_name" => (string)$xr['xfer_stop_name']
+                        ],
+                        "leg_2" => [
+                            "route_id" => (string)$xr['routeB_id'],
+                            "route_short_name" => (string)$xr['routeB_short'],
+                            "route_long_name" => (string)$xr['routeB_long'],
+                            "direction_id" => (int)$xr['dirB'],
+                            "board_stop_id" => (string)$xr['xfer_stop_id'],
+                            "board_stop_name" => (string)$xr['xfer_stop_name'],
+                            "board_stop_sequence" => (int)$xr['boardB_seq'],
+                            "alight_stop_id" => (string)$xr['alightB_stop_id'],
+                            "alight_stop_name" => (string)$xr['alightB_stop_name'],
+                            "alight_stop_sequence" => (int)$xr['alightB_seq'],
+                            "hops" => (int)$xr['hopsB']
+                        ],
+                        "total_hops" => (int)$xr['total_hops']
+                    ];
+
+                    if (count($transferJourneys) >= 3) {
+                        break;
+                    }
+                }
+
+                if (!empty($transferJourneys)) {
+                    echo json_encode([
+                        "status" => "success",
+                        "count" => count($transferJourneys),
+                        "is_transfer" => true,
+                        "data" => $transferJourneys
+                    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                    exit;
+                }
+            }
+        }
+
+        echo json_encode([
+            "status" => "success",
+            "count" => 0,
+            "message" => "I couldn't find a verified direct route between those locations in my transport data.",
+            "data" => []
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
     }
 

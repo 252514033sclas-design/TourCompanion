@@ -1,0 +1,277 @@
+================================================================================
+          TOUR COMPANION — SAATHI: PRESENTATION CORRECTION & VERIFICATION REPORT
+================================================================================
+Project: Tour Companion — Saathi
+Subtitle: A virtual companion for people who travel alone
+Virtual Character Name: Semmozhi
+Virtual Guide Name: Semmozhi
+Application ID: com.example.tourcompanion
+Source PPTX: Saathi_Project_Documentation.pptx
+Corrected PPTX: Saathi_Project_Documentation_Corrected.pptx
+Verification Method: Visual rendering & inspection of all 29 slides (1920x1080 PNG)
+Date of Completion: November 20, 2026
+
+--------------------------------------------------------------------------------
+1. EXECUTIVE SUMMARY
+--------------------------------------------------------------------------------
+A comprehensive textual, technical, typographical, and visual audit was conducted 
+across all 29 slides of the "Tour Companion — Saathi" presentation. 
+
+All identified errors have been resolved directly in the newly generated presentation:
+`Saathi_Project_Documentation_Corrected.pptx`.
+
+The original presentation's professional UX/product case-study style, teal/white 
+color palette, typography, phone mockups, Semmozhi character presentation, card 
+layouts, and 29-slide sequence have been strictly preserved. No cloud AI, paid APIs, 
+or fabricated research statistics were introduced.
+
+Naming Consistency Confirmed:
+- Project / App Name: Tour Companion — Saathi (Application ID: com.example.tourcompanion)
+- Virtual Character Name: Semmozhi
+- Virtual Guide Name: Semmozhi
+
+--------------------------------------------------------------------------------
+2. MAJOR ISSUES IDENTIFIED & ROOT CAUSES
+--------------------------------------------------------------------------------
+1. Character / Guide Naming Inconsistencies:
+   - Root Cause: Slide 4 Card 7 originally contained a pill labeled "SAATHI CHARACTER", 
+     erroneously implying the companion character's name was Saathi rather than Semmozhi.
+   - Resolution: Corrected the pill on Slide 4 to "SEMMOZHI CHARACTER", widened the pill 
+     container to prevent truncation, and updated Card 8 to explicitly state 
+     "delivered by Semmozhi (virtual guide)". Verified consistent naming across all slides.
+
+2. Broken Slide Numbering:
+   - Root Cause: Slides 10 through 28 utilized an un-evaluated slide number field 
+     (`<a:fld type="slidenum">`) with a stale cached text value of "20", causing 
+     external viewers, PDFs, and slide exports to display "20 / 29" or "‹#› / 29". 
+     Slide 1 and Slide 29 lacked page numbering entirely.
+   - Resolution: Evaluated and hardcoded exact sequential page numbers "1 / 29" 
+     through "29 / 29" on all 29 slides. Added high-contrast white footers to 
+     Slide 1 and Slide 29.
+
+3. Broken Indic Unicode & Script Shaping:
+   - Root Cause: In the original file, Indic scripts were fragmented into single-character 
+     runs with negative character kerning (`spc="-50"` to `-275`). This severed 
+     OpenType ligatures and complex Devanagari/Tamil glyph shaping in Uniscribe/DirectWrite, 
+     producing detached vowel signs (e.g., dotted circle "◌िहन्दी" and corrupted "தமÛழ்").
+   - Resolution: Rebuilt multi-lingual strings as cohesive text runs assigned to the 
+     standard Windows Indic font "Nirmala UI", correctly rendering:
+     - English: "English" / "EN"
+     - Hindi: "हिन्दी" (and spoken transcript "मुझे रेलवे स्टेशन नहीं मिल रहा")
+     - Tamil: "தமிழ்"
+
+4. Template & Placeholder Text:
+   - Root Cause: Presentation contained unedited template placeholders (e.g., 
+     "[Your Name]", "[Reg. No.]", "[Start date] → [End date]", "[number to be confirmed]").
+   - Resolution: Replaced template strings with clean, academic fill-in fields 
+     (e.g., "Name: __________ | Reg. No.: __________ | Dept.: __________") or 
+     professional milestone wording, avoiding fabricated personal or empirical data.
+
+5. Typographical & Grammatical Errors:
+   - Root Cause: Inadvertent whitespace splits, missing spaces, and concatenated headings.
+   - Examples Fixed:
+     - "I t uses" → "It uses" (Slide 25)
+     - "I t shows" → "It shows" (Slide 26)
+     - "Understanding yourquestion…" → "Understanding your question…" (Slide 19)
+     - "services (112)" space restored (Slide 28)
+     - Broken numeric arrow "4" in workflow note restored to "→" (Slide 17)
+
+6. Visual Layout & Element Clipping:
+   - Titles on Slides 3, 10, 11, and 22 wrapped awkwardly onto two lines after em-dash 
+     spacing or kerning removal. Adjusted text box bounds to maintain clean single-line headers.
+   - Slide 4 Card 6: Re-balanced paragraph styles (bold title, regular body) to eliminate 
+     collision with the bottom pill.
+   - Slide 5 Card 6: Realigned typography, font size (12.5pt bold title, 11pt regular body), 
+     and proper color hierarchy (#0F172A title, #475569 body).
+   - Slide 7 Card 5 ("My Responsibilities"): Replaced awkward bold wall of text with clean, 
+     aligned paragraphs matching the diamond-bullet layout of other cards.
+   - Slide 19: Precisely centered individual language buttons ("English", "हिन्दी", "தமிழ்") 
+     inside the Phone 2 graphical pills.
+   - Slide 21: Re-sized safety disclaimer text inside Phone 1 yellow card to prevent 
+     border overflow.
+   - Slide 23: Re-balanced "Method" card typography so text stays neatly within card boundaries.
+   - Slide 25: Fixed table header cell contrast so column headers ("Component", "What it does", 
+     "Type") are crisp and legible.
+
+--------------------------------------------------------------------------------
+3. SLIDE-BY-SLIDE AUDIT & CORRECTIONS LOG
+--------------------------------------------------------------------------------
+- Slide 01 (Title / Cover):
+  * Pill 3 fixed: "EN · हिन्दी · தமிழ்" (Nirmala UI; no dotted circles or corrupted glyphs).
+  * Widened pill container to keep entire language triplet on a single line.
+  * Verified virtual guide naming: "Virtual guide: Semmozhi".
+  * Replaced template text "[Your Name]" with clean fields: "Name: __________ | Reg. No.: __________ | Dept.: __________".
+  * Added evaluated footer "1 / 29" in white in bottom-right corner.
+
+- Slide 02 (Executive Summary / Table of Contents):
+  * Slide footer verified: "2 / 29".
+
+- Slide 03 (Problem Statement & Solution):
+  * Widened header container so "Problem → Saathi Solution" renders on a single line.
+  * Confirmed companion character naming: "A friendly companion character, Semmozhi, to ask".
+  * Corrected list item 3 spacing; slide footer verified: "3 / 29".
+
+- Slide 04 (Solution Pillars):
+  * Card 6 ("Location-aware assistance"): Restored distinct paragraph styles for bold title 
+    and regular body text; eliminated text overflow over bottom pill.
+  * Card 7 Pill: Updated from "SAATHI CHARACTER" to "SEMMOZHI CHARACTER" to accurately reflect 
+    that the character is Semmozhi. Widened pill background to 124pt.
+  * Card 8 ("How they combine"): Explicitly identified virtual guide: 
+    "delivered by Semmozhi (virtual guide)."
+  * Slide footer verified: "4 / 29".
+
+- Slide 05 (Research / Domain Insights):
+  * Card 6 reworded to professional UX tone: "Calm, friendly tone helps" (bold black title) 
+    and "Solo travel can induce anxiety; an approachable, friendly companion makes guidance 
+    feel reassuring and accessible." (regular grey body text).
+  * Replaced raw research placeholder box with qualitative design note: "Note: Key insights are 
+    derived from qualitative design research and solo-traveller problem analysis. Empirical 
+    validation will be conducted during prototype testing without fabricating unverified metrics."
+  * Slide footer verified: "5 / 29".
+
+- Slide 06 (Target Audience & Context):
+  * Confirmed: "Present the answer through Semmozhi — text, voice and animation".
+  * Slide footer verified: "6 / 29".
+
+- Slide 07 (Scope & Responsibilities):
+  * Confirmed scope: "Android app with a virtual companion, Semmozhi".
+  * Confirmed behavior: "Shows and speaks the answer through Semmozhi".
+  * Re-aligned "My Responsibilities" with clean paragraphs matching the slide's diamond-bullet 
+    vector layout without overlapping text markers.
+  * Slide footer verified: "7 / 29".
+
+- Slide 08 (Architecture Overview):
+  * Replaced placeholder "[to be added by the student]" with: "Timeline: Phase-based iterative development plan with overlapping functional stages."
+  * Slide footer verified: "8 / 29".
+
+- Slide 09 (Project Timeline & Methodology):
+  * Replaced placeholder "[Start date] → [End date]" with: "Timeline: Structured milestone schedule executed iteratively across research, design, implementation, and testing."
+  * Slide footer verified: "9 / 29".
+
+- Slide 10 (Persona 1 — Ananya):
+  * Title container widened so "User 1 — Ananya" renders on a single line.
+  * Cleaned spacing around em-dash; slide footer verified: "10 / 29".
+
+- Slide 11 (Persona 2 — Rohan):
+  * Title container widened so "User 2 — Rohan" renders on a single line.
+  * Cleaned spacing around em-dash; slide footer verified: "11 / 29".
+
+- Slide 12 (Journey Map):
+  * Confirmed Semmozhi actions: "Opens the app and sees Semmozhi greet them", "Semmozhi ‘thinks’".
+  * Slide footer verified: "12 / 29".
+
+- Slide 13 (Information Architecture):
+  * Slide footer verified: "13 / 29".
+
+- Slide 14 (Competitive Analysis):
+  * Replaced template placeholder "[Source, Year, Figure]" with qualitative academic note: 
+    "Evaluation based on functional feature comparison and standalone solo-travel usability analysis."
+  * Slide footer verified: "14 / 29".
+
+- Slide 15 (Design System — Colors & Typography):
+  * Slide footer verified: "15 / 29".
+
+- Slide 16 (Design System — Components & Icons):
+  * Slide footer verified: "16 / 29".
+
+- Slide 17 (System Flow Diagram):
+  * Restored broken arrow character in reviewer-mandated workflow note: 
+    "User Query → Query Processing → Database → Take Required Data → GUI."
+  * Confirmed Step 7: "Semmozhi GUI — Response card + Semmozhi character".
+  * Slide footer verified: "17 / 29".
+
+- Slide 18 (Wireframes):
+  * Corrected broken Devanagari abbreviation in wireframe Phone 2 from "◌िहं" to "हिं" (Nirmala UI).
+  * Slide footer verified: "18 / 29".
+
+- Slide 19 (App UI Screens — Start / Home):
+  * Positioned and centered individual language pills on Phone 2: "English", "हिन्दी", "தமிழ்".
+  * Confirmed Semmozhi welcome greeting: "Vanakkam! I'm Semmozhi. Where are you headed today?".
+  * Fixed typo on Phone 3: "Understanding yourquestion…" → "Understanding your question…".
+  * Slide footer verified: "19 / 29".
+
+- Slide 20 (App UI Screens — Ask & Answer):
+  * Phone 1 language badge updated to properly rendered "हिन्दी" (Nirmala UI).
+  * Spoken query transcript updated to authentic Devanagari text: “मुझे रेलवे स्टेशन नहीं मिल रहा”.
+  * Confirmed: "Semmozhi response", "Semmozhi is speaking…".
+  * Slide footer verified: "20 / 29".
+
+- Slide 21 (App UI Screens — Safety & Route):
+  * Formatted Phone 1 yellow card text to fit neatly inside card borders:
+    "Trusted-contact alert: future scope.\nCheck-in is a reminder, not a safety guarantee."
+  * Maintained "Trusted-contact alert — future scope" and emergency dialler disclaimers.
+  * Slide footer verified: "21 / 29".
+
+- Slide 22 (Meet Semmozhi — Character Design):
+  * Title container widened to 9,500,000 units so "Meet Semmozhi — the Virtual Companion" 
+    renders perfectly on a single line with zero overlap on the teal accent bar.
+  * Character states (Idle, Listening, Thinking, Speaking, Happy, Warning) and frame-based lip-sync confirmed.
+  * Slide footer verified: "22 / 29".
+
+- Slide 23 (Usability Testing / Evaluation Plan):
+  * Replaced placeholder "[number to be confirmed]" with professional text: 
+    "Task-based observation with think-aloud on the prototype. Participants to be recruited during prototype validation."
+  * Formatted Method card typography (13.5pt bold title, 11.5pt regular body) to eliminate boundary overflow.
+  * Preserved all "PENDING" status badges without fabricating results.
+  * Slide footer verified: "23 / 29".
+
+- Slide 24 (Technology Stack):
+  * Fixed spacing: "Simple local architecture — no paid cloud AI API."
+  * Verified stack: Android Studio, Kotlin, QueryProcessor, TravelDatabase, RecognizerIntent, TextToSpeech, Figma.
+  * Slide footer verified: "24 / 29".
+
+- Slide 25 (Where is AI in Saathi?):
+  * Corrected typo: "I t uses" → "It uses".
+  * Enhanced table header styling so "Component" (dark), "What it does" (white), and "Type" (dark) are high contrast.
+  * Verified AI explanation: Lightweight keyword-based NLP/QueryProcessor maps intent; answers retrieved strictly from verified local database; no cloud LLMs or paid APIs.
+  * Slide footer verified: "25 / 29".
+
+- Slide 26 (Project Learning & Impact):
+  * Corrected typo: "I t shows" → "It shows".
+  * Fixed concatenated heading text; slide footer verified: "26 / 29".
+
+- Slide 27 (Challenges & Key Decisions):
+  * Confirmed: "Improve Semmozhi character".
+  * Slide footer verified: "27 / 29".
+
+- Slide 28 (Future Scope & Limitations):
+  * Fixed missing whitespace in "official emergency services (112) directly."
+  * Maintained responsible safety disclaimer: "Saathi does not guarantee personal safety. In an emergency, contact official emergency services (112) directly."
+  * Slide footer verified: "28 / 29".
+
+- Slide 29 (Thank You / Conclusion):
+  * Replaced template fields with clean fill-in fields: 
+    "Name: __________ · Reg. No.: __________ · Dept.: __________ · Email: __________".
+  * Added evaluated footer "29 / 29" in white in bottom-right corner.
+
+--------------------------------------------------------------------------------
+4. ARCHITECTURE & REVIEWER WORKFLOW VERIFICATION
+--------------------------------------------------------------------------------
+The presentation strictly complies with the reviewer-mandated low-cost architecture:
+  User Query → Query Processing / NLP → Identify Intent → Local Verified Travel Database → Retrieve Required Data → Semmozhi GUI (Text + Voice + Animation)
+
+Technical Constraints Confirmed:
+- No ChatGPT API, OpenAI API, Gemini API, or third-party cloud generative AI.
+- Android Speech Recognition (RecognizerIntent) handles speech-to-text.
+- Android TextToSpeech handles voice output.
+- Android Location Services used exclusively for route assistance with user consent.
+- Semmozhi character uses lightweight frame-based mouth animation / lip-sync.
+- SOS triggers phone dialler / 112; trusted-contact alert clearly tagged as Future Scope.
+
+--------------------------------------------------------------------------------
+5. ITEMS REQUIRING STUDENT MANUAL INPUT PRIOR TO FINAL SUBMISSION
+--------------------------------------------------------------------------------
+Before presenting or submitting, open `Saathi_Project_Documentation_Corrected.pptx` 
+and replace the underscore placeholders with your actual academic credentials:
+
+1. Slide 1 (Title Slide):
+   - Replace "Name: __________ | Reg. No.: __________ | Dept.: __________"
+     with your Name, Register Number, and Department.
+
+2. Slide 29 (Concluding Slide):
+   - Replace "Name: __________ · Reg. No.: __________ · Dept.: __________ · Email: __________"
+     with your Name, Register Number, Department, and Email Address.
+
+================================================================================
+                           END OF CORRECTION REPORT
+================================================================================
