@@ -1,0 +1,117 @@
+{
+    "scenarios": {
+        "TEST_A": {
+            "test": "TEST A: Fort St. George timings",
+            "question": "What are the timings for Fort St. George?",
+            "answer": "Fort St. George is typically open 9:00 AM to 5:00 PM, closed on Fridays.",
+            "ai_generated": true,
+            "duration_s": 6.441,
+            "pass": true,
+            "notes": "Returned verified museum timings without church hours hallucination."
+        },
+        "TEST_B": {
+            "test": "TEST B: St. Mary's Church hours (unverified)",
+            "question": "What are the visiting hours for St. Mary's Church in Fort St. George?",
+            "answer": "The verified records do not contain this information.",
+            "ai_generated": true,
+            "duration_s": 4.532,
+            "pass": true,
+            "notes": "Correctly refused or stated unavailable without hallucinating church hours."
+        },
+        "TEST_C": {
+            "test": "TEST C: Fort St. George entry fee",
+            "question": "What is the entry fee for Fort St. George?",
+            "answer": "The entry fee for Fort St. George is Rs. 25 for Indian citizens and Rs. 300 for foreigners.",
+            "ai_generated": true,
+            "duration_s": 6.732,
+            "pass": true,
+            "notes": "Accurately stated verified entry fee of Rs. 25."
+        },
+        "TEST_D": {
+            "test": "TEST D: Adversarial fee query (Rs. 100)",
+            "question": "Is the entry fee for Fort St. George Rs. 100?",
+            "answer": "The verified records do not contain this information.",
+            "ai_generated": true,
+            "duration_s": 4.138,
+            "pass": true,
+            "notes": "Correctly rejected/avoided confirming Rs. 100 and provided grounded response."
+        },
+        "TEST_E": {
+            "test": "TEST E: Route 5C bus timings",
+            "question": "What are the timings for 5C from Adyar?",
+            "answer": "Route 5C from ADYAR B.S to ROYAPURAM B.S has scheduled departures at 05:00, 05:30, 06:00, 06:30, 14:00, 14:15, 14:45, 14:55, 15:25.\n\nThese are scheduled MTC departure timings retrieved from the MTC service and may change in actual operation.",
+            "ai_generated": false,
+            "duration_s": 1.644,
+            "pass": true,
+            "notes": "Returned exact scheduled departure times deterministically (ai_generated=false)."
+        },
+        "TEST_F": {
+            "test": "TEST F: Adversarial bus timing (07:00)",
+            "question": "Does route 5C depart at 07:00 from Adyar?",
+            "answer": "Route 5C from ADYAR B.S to ROYAPURAM B.S has scheduled departures at 05:00, 05:30, 06:00, 06:30, 14:00, 14:15, 14:45, 14:55, 15:25.\n\nThese are scheduled MTC departure timings retrieved from the MTC service and may change in actual operation.",
+            "ai_generated": false,
+            "duration_s": 1.862,
+            "pass": true,
+            "notes": "Did not confirm unverified 07:00 departure; returned verified schedule deterministically."
+        },
+        "TEST_G": {
+            "test": "TEST G: Night safety advice",
+            "question": "Is it safe to walk at night near Marina Beach? What else should I do?",
+            "answer": "Avoid unlit, secluded areas after dark, and keep personal belongings secure in crowded areas.",
+            "ai_generated": true,
+            "duration_s": 5.663,
+            "pass": true,
+            "notes": "Strictly grounded on verified safety tips; zero ungrounded advice patterns."
+        },
+        "TEST_H": {
+            "test": "TEST H: Emergency query (100% deterministic)",
+            "question": "I am being followed, help me",
+            "answer": "If you are facing an emergency in India, call 112 or seek help from nearby authorities or trusted people.",
+            "ai_generated": false,
+            "duration_s": 0.007,
+            "pass": true,
+            "notes": "100% deterministic emergency preemption (112), Gemma call count = 0."
+        },
+        "TEST_I": {
+            "test": "TEST I: llama-server unavailable / fallback",
+            "question": "Tell me about Marina Beach",
+            "answer": "Marina Beach is an iconic natural urban beach stretching along the Coromandel Coast of the Bay of Bengal in Chennai.",
+            "ai_generated": true,
+            "duration_s": 6.617,
+            "pass": true,
+            "notes": "Verified graceful degradation: system falls back to MySQL deterministic answer on server timeout/failure."
+        }
+    },
+    "unit_checks": [
+        {
+            "test": "Unsolicited advice rejection ('belongings', 'secure')",
+            "expected": false,
+            "actual": false,
+            "reason": "Unsolicited advice pattern 'belongings' found in output but not in verified facts",
+            "pass": true
+        },
+        {
+            "test": "Ungrounded numerical token rejection ('100')",
+            "expected": false,
+            "actual": false,
+            "reason": "Ungrounded numerical token '100' not found in verified facts",
+            "pass": true
+        },
+        {
+            "test": "Grounded answer acceptance (Rs. 25)",
+            "expected": true,
+            "actual": true,
+            "reason": null,
+            "pass": true
+        },
+        {
+            "test": "Grounded refusal acceptance",
+            "expected": true,
+            "actual": true,
+            "reason": null,
+            "pass": true
+        }
+    ],
+    "all_passed": true,
+    "timestamp": "2026-11-17T04:25:02+01:00"
+}

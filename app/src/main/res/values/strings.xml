@@ -164,4 +164,5 @@
         <item>Tourist helpline number</item>
         <item>Is it safe at night?</item>
     </string-array>
+    <string name="ask_mic_content_desc">Use voice input</string>
 </resources>

@@ -2,7 +2,7 @@ package com.example.tourcompanion
 
 import android.content.Intent
 
-/** Phrase book hub: choose Tamil or Hindi. */
+/** Phrase book hub: choose Tamil, Hindi or English. */
 class UsefulPhrasesActivity : ListScreenActivity() {
 
     override fun screenTitle() = getString(R.string.phrases_title)
@@ -14,6 +14,9 @@ class UsefulPhrasesActivity : ListScreenActivity() {
         }
         UiKit.addMenuRow(container, "हि", getString(R.string.hindi_phrases), getString(R.string.phrases_count)) {
             open("hindi")
+        }
+        UiKit.addMenuRow(container, "EN", "English phrases", "Essential phrases in English") {
+            open("english")
         }
     }
 

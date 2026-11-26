@@ -7,6 +7,7 @@
     android:background="@color/bg"
     android:orientation="vertical">
 
+    <!-- 1. Header with Back button, Semmozhi Character Avatar and Title -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,17 +16,32 @@
         android:gravity="center_horizontal"
         android:orientation="vertical"
         android:paddingStart="20dp"
-        android:paddingTop="18dp"
+        android:paddingTop="12dp"
         android:paddingEnd="20dp"
-        android:paddingBottom="26dp">
+        android:paddingBottom="14dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/backAskButton"
+            style="@style/Widget.Tour.Button.Secondary"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="start"
+            android:minWidth="0dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="4dp"
+            android:textColor="@android:color/white"
+            app:backgroundTint="#26FFFFFF"
+            app:strokeColor="#66FFFFFF"
+            android:text="← Back" />
 
         <FrameLayout
-            android:layout_width="132dp"
-            android:layout_height="132dp">
+            android:layout_width="145dp"
+            android:layout_height="145dp">
 
             <View
-                android:layout_width="124dp"
-                android:layout_height="124dp"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
                 android:layout_gravity="center"
                 android:background="@drawable/bg_circle_soft" />
 
@@ -36,117 +52,109 @@
         </FrameLayout>
 
         <TextView
-            
             style="@style/Text.Tour.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
+            android:textSize="22sp"
             android:text="Ask Semmozhi" />
 
         <TextView
-            
             style="@style/Text.Tour.Subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
+            android:textSize="13sp"
             android:text="Your virtual travel companion" />
     </LinearLayout>
 
-    <ScrollView
+    <!-- 2. ONE Unified Conversation / Chat Container -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/chatCardContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:clipToPadding="false"
-        android:fillViewport="true"
-        android:scrollbars="none">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="3dp"
-            app:strokeWidth="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <EditText
-                    android:id="@+id/askQuestionInput"
-                    style="@style/Widget.Tour.Input"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:hint="Type your question…"
-                    android:imeOptions="actionSend"
-                    android:inputType="textCapSentences" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/askSemmozhiButton"
-                    style="@style/Widget.Tour.Button.Primary"
-                    android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginTop="12dp"
-                    android:text="Ask Semmozhi" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            app:cardBackgroundColor="@color/surface"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="3dp"
-            app:strokeWidth="0dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="● Semmozhi says"
-                    android:textColor="@color/primary"
-                    android:textSize="13sp" />
-
-                <TextView
-                    android:id="@+id/askAnswerText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_answer_bubble"
-                    android:lineSpacingExtra="3dp"
-                    android:padding="14dp"
-                    android:text="Semmozhi's answer will appear here."
-                    android:textColor="@color/text_primary"
-                    android:textSize="16sp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-    </ScrollView>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/backAskButton"
-        style="@style/Widget.Tour.Button.Secondary"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:text="← Back" />
+        app:cardBackgroundColor="@color/surface"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="2dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/stroke">
+
+        <ScrollView
+            android:id="@+id/chatScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:scrollbars="vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
+
+            <LinearLayout
+                android:id="@+id/chatMessagesContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/emptyChatHint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:gravity="center"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp"
+                    android:text="Ask Semmozhi any question about places, transport, or advice." />
+
+            </LinearLayout>
+        </ScrollView>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- 3. Message Input + Microphone -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="2dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/askQuestionInput"
+            style="@style/Widget.Tour.Input"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:hint="Type your question…"
+            android:imeOptions="actionSend"
+            android:inputType="textCapSentences"
+            android:layout_marginEnd="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/askVoiceButton"
+            style="@style/Widget.Tour.Button.Round"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="🎤" />
+    </LinearLayout>
+
+    <!-- 4. Ask Semmozhi Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/askSemmozhiButton"
+        style="@style/Widget.Tour.Button.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="12dp"
+        android:text="Ask Semmozhi" />
 
 </LinearLayout>

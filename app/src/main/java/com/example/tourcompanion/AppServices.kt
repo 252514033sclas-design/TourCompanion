@@ -11,6 +11,24 @@ object AppServices {
     @Volatile
     private var users: UserRepository? = null
 
+    @Volatile
+    private var travelTips: TravelTipsRepository? = null
+
+    @Volatile
+    private var usefulPhrases: UsefulPhrasesRepository? = null
+
+    @Volatile
+    private var safety: SafetyRepository? = null
+
+    @Volatile
+    private var transport: TransportRepository? = null
+
+    @Volatile
+    private var location: AppLocationManager? = null
+
+    @Volatile
+    private var mtcProvider: MtcTransportProvider? = null
+
     fun userRepository(context: Context): UserRepository =
         users ?: synchronized(this) {
             users ?: UserRepository(context.applicationContext).also { users = it }
@@ -18,6 +36,39 @@ object AppServices {
 
     fun queryProcessor(context: Context): QueryProcessor =
         processor ?: synchronized(this) {
-            processor ?: QueryProcessor(context.applicationContext).also { processor = it }
+            processor ?: QueryProcessor(context.applicationContext).also {
+                processor = it
+                it.initAliasesAsync()
+            }
+        }
+
+    fun travelTipsRepository(context: Context): TravelTipsRepository =
+        travelTips ?: synchronized(this) {
+            travelTips ?: TravelTipsRepository(context.applicationContext).also { travelTips = it }
+        }
+
+    fun usefulPhrasesRepository(context: Context): UsefulPhrasesRepository =
+        usefulPhrases ?: synchronized(this) {
+            usefulPhrases ?: UsefulPhrasesRepository(context.applicationContext).also { usefulPhrases = it }
+        }
+
+    fun safetyRepository(context: Context): SafetyRepository =
+        safety ?: synchronized(this) {
+            safety ?: SafetyRepository(context.applicationContext).also { safety = it }
+        }
+
+    fun transportRepository(context: Context): TransportRepository =
+        transport ?: synchronized(this) {
+            transport ?: TransportRepository(context.applicationContext).also { transport = it }
+        }
+
+    fun locationProvider(context: Context): AppLocationManager =
+        location ?: synchronized(this) {
+            location ?: AppLocationManager(context.applicationContext).also { location = it }
+        }
+
+    fun mtcTransportProvider(): MtcTransportProvider =
+        mtcProvider ?: synchronized(this) {
+            mtcProvider ?: MtcTransportProvider().also { mtcProvider = it }
         }
 }

@@ -34,7 +34,7 @@
                     android:paddingStart="22dp"
                     android:paddingTop="22dp"
                     android:paddingEnd="22dp"
-                    android:paddingBottom="60dp">
+                    android:paddingBottom="24dp">
 
                     <TextView
                         android:id="@+id/greetingText"
@@ -69,57 +69,13 @@
                     </FrameLayout>
                 </LinearLayout>
 
-                <!-- Floating question box -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="-34dp"
-                    android:layout_marginEnd="16dp"
-                    app:cardBackgroundColor="@color/surface"
-                    app:cardCornerRadius="32dp"
-                    app:cardElevation="8dp"
-                    app:strokeWidth="0dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:padding="6dp">
-
-                        <EditText
-                            android:id="@+id/questionInput"
-                            android:layout_width="0dp"
-                            android:layout_height="52dp"
-                            android:layout_weight="1"
-                            android:background="@null"
-                            android:hint="@string/home_input_hint"
-                            android:imeOptions="actionSend"
-                            android:inputType="textCapSentences"
-                            android:maxLines="1"
-                            android:paddingStart="18dp"
-                            android:paddingEnd="8dp"
-                            android:textColor="@color/text_primary"
-                            android:textColorHint="#94A3B8"
-                            android:textSize="16sp" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/voiceButton"
-                            style="@style/Widget.Tour.Button.Round"
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:text="🎤" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/askButton"
                     style="@style/Widget.Tour.Button.Primary"
                     android:layout_width="match_parent"
                     android:layout_height="58dp"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginEnd="16dp"
                     android:text="@string/home_ask_button" />
 

@@ -2,6 +2,7 @@ package com.example.tourcompanion
 
 import android.app.Activity
 import android.graphics.Color
+import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
@@ -42,6 +43,21 @@ object EdgeToEdge {
         val bottomBase = bottoms.map { it.paddingBottom }
         val rootBase = root.paddingBottom
 
+        // Pre-apply system insets synchronously before first frame draw to eliminate vertical jump
+        val initialBarsTop = computeInitialTopInset(activity, root)
+        val initialBarsBottom = computeInitialBottomInset(activity, root)
+
+        if (initialBarsTop > 0) {
+            headers.forEachIndexed { i, view -> view.updatePadding(top = headerBase[i] + initialBarsTop) }
+        }
+        if (initialBarsBottom > 0) {
+            if (bottoms.isEmpty()) {
+                root.updatePadding(bottom = rootBase + initialBarsBottom)
+            } else {
+                bottoms.forEachIndexed { i, view -> view.updatePadding(bottom = bottomBase[i] + initialBarsBottom) }
+            }
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
             val bars = insets.getInsets(
                 WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
@@ -59,6 +75,36 @@ object EdgeToEdge {
             insets
         }
         ViewCompat.requestApplyInsets(root)
+    }
+
+    private fun computeInitialTopInset(activity: Activity, root: View): Int {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            runCatching {
+                val windowMetrics = activity.windowManager.currentWindowMetrics
+                val insets = WindowInsetsCompat.toWindowInsetsCompat(windowMetrics.windowInsets, root)
+                val top = insets.getInsets(
+                    WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+                ).top
+                if (top > 0) return top
+            }
+        }
+        val resId = activity.resources.getIdentifier("status_bar_height", "dimen", "android")
+        return if (resId > 0) activity.resources.getDimensionPixelSize(resId) else 0
+    }
+
+    private fun computeInitialBottomInset(activity: Activity, root: View): Int {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            runCatching {
+                val windowMetrics = activity.windowManager.currentWindowMetrics
+                val insets = WindowInsetsCompat.toWindowInsetsCompat(windowMetrics.windowInsets, root)
+                val bottom = insets.getInsets(
+                    WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+                ).bottom
+                if (bottom > 0) return bottom
+            }
+        }
+        val resId = activity.resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        return if (resId > 0) activity.resources.getDimensionPixelSize(resId) else 0
     }
 
     private fun collect(view: View, out: MutableList<View>, tag: String) {

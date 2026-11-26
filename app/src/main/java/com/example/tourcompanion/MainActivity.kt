@@ -23,17 +23,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var saathiView: SaathiView
-    private lateinit var questionInput: EditText
     private lateinit var answerText: TextView
 
     private lateinit var askButton: Button
-    private lateinit var voiceButton: Button
     private lateinit var emergencyButton: View
 
     private lateinit var bottomNav: BottomNavigationView
@@ -42,8 +41,34 @@ class MainActivity : AppCompatActivity() {
     private lateinit var panelSafety: View
     private lateinit var panelProfile: View
 
+    private var currentTabId: Int = R.id.nav_home
+    private var profileNameView: TextView? = null
+    private var profileEmailView: TextView? = null
+    private var profileLanguageView: TextView? = null
+    private var profileJoinedView: TextView? = null
+    private var profileBuiltForLoggedIn: Boolean? = null
+
     private lateinit var speaker: Speaker
     private lateinit var repository: AnswerRepository
+    private lateinit var locationProvider: AppLocationManager
+    private var pendingQuestion: String? = null
+    private var hasPromptedLocationPermission = false
+
+    private val locationPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+
+            if (granted) {
+                locationProvider.getLastKnownCoordinates()
+            }
+
+            val question = pendingQuestion
+            pendingQuestion = null
+            if (!question.isNullOrBlank()) {
+                answerQuestion(question)
+            }
+        }
 
     private val microphonePermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -62,9 +87,12 @@ class MainActivity : AppCompatActivity() {
                     ?.firstOrNull()
 
                 if (!spoken.isNullOrBlank()) {
-                    questionInput.setText(spoken)
                     answerQuestion(spoken)
+                } else {
+                    saathiView.setState(SaathiView.State.IDLE)
                 }
+            } else {
+                saathiView.setState(SaathiView.State.IDLE)
             }
         }
 
@@ -75,46 +103,17 @@ class MainActivity : AppCompatActivity() {
         EdgeToEdge.apply(this)
 
         saathiView = findViewById(R.id.saathiView)
-        questionInput = findViewById(R.id.questionInput)
         answerText = findViewById(R.id.answerText)
-
         askButton = findViewById(R.id.askButton)
-        voiceButton = findViewById(R.id.voiceButton)
         emergencyButton = findViewById(R.id.emergencyButton)
 
         repository = AnswerRepository(this)
         speaker = Speaker(this, saathiView)
+        locationProvider = AppServices.locationProvider(this)
+        initForegroundLocation()
 
-        // Ask: answer here if something is typed, otherwise open the full Ask screen.
         askButton.setOnClickListener {
-            val question = questionInput.text.toString().trim()
-            if (question.isEmpty()) {
-                startActivity(Intent(this, AskSemmozhiActivity::class.java))
-            } else {
-                answerQuestion(question)
-            }
-        }
-
-        questionInput.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEND ||
-                actionId == EditorInfo.IME_ACTION_DONE ||
-                actionId == EditorInfo.IME_ACTION_GO
-            ) {
-                askButton.performClick()
-                true
-            } else {
-                false
-            }
-        }
-
-        voiceButton.setOnClickListener {
-            if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) !=
-                PackageManager.PERMISSION_GRANTED
-            ) {
-                microphonePermissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
-            } else {
-                startVoiceInput()
-            }
+            startActivity(Intent(this, AskSemmozhiActivity::class.java))
         }
 
         emergencyButton.setOnClickListener {
@@ -145,7 +144,6 @@ class MainActivity : AppCompatActivity() {
             val chip = LayoutInflater.from(this).inflate(R.layout.item_chip, chips, false) as TextView
             chip.text = suggestion
             chip.setOnClickListener {
-                questionInput.setText(suggestion)
                 answerQuestion(suggestion)
             }
             chips.addView(chip)
@@ -185,17 +183,19 @@ class MainActivity : AppCompatActivity() {
         row(safety, "☎️", R.string.menu_helplines, R.string.menu_helplines_sub, HelplinesActivity::class.java)
         row(safety, "👤", R.string.menu_contact, R.string.menu_contact_sub, MyContactActivity::class.java)
 
-        buildProfile()
+        updateProfileData(fetchRemote = true)
 
         bottomNav.setOnItemSelectedListener { item ->
-            showPanel(item.itemId)
+            if (item.itemId != currentTabId) {
+                showPanel(item.itemId)
+            }
             true
         }
 
         // Back from another tab returns to Home first; back on Home leaves the app.
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (bottomNav.selectedItemId != R.id.nav_home) {
+                if (currentTabId != R.id.nav_home) {
                     bottomNav.selectedItemId = R.id.nav_home
                 } else {
                     isEnabled = false
@@ -203,6 +203,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            AppServices.travelTipsRepository(applicationContext).syncTips()
+        }
     }
 
     private fun row(
@@ -219,27 +223,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showPanel(itemId: Int) {
+        if (itemId == currentTabId) return
+        currentTabId = itemId
+
         panelHome.visibility = if (itemId == R.id.nav_home) View.VISIBLE else View.GONE
         panelExplore.visibility = if (itemId == R.id.nav_explore) View.VISIBLE else View.GONE
         panelSafety.visibility = if (itemId == R.id.nav_safety) View.VISIBLE else View.GONE
         panelProfile.visibility = if (itemId == R.id.nav_profile) View.VISIBLE else View.GONE
+
+        if (itemId == R.id.nav_profile) {
+            updateProfileData(fetchRemote = false)
+        }
     }
 
     // ---------------------------------------------------------
     // Profile tab: who you are, tools, log out, delete account
     // ---------------------------------------------------------
 
-    private fun buildProfile() {
+    private fun ensureProfileBuilt(loggedIn: Boolean) {
+        if (profileBuiltForLoggedIn == loggedIn) {
+            return
+        }
+
         val container = findViewById<LinearLayout>(R.id.profileContainer)
         container.removeAllViews()
 
-        val loggedIn = Session.isLoggedIn(this)
-
         val header = LayoutInflater.from(this).inflate(R.layout.item_profile_header, container, false)
-        header.findViewById<TextView>(R.id.profileName).text =
-            if (loggedIn) Session.userName(this) else getString(R.string.profile_guest)
-        header.findViewById<TextView>(R.id.profileEmail).text =
-            if (loggedIn) Session.userEmail(this) else getString(R.string.profile_guest_sub)
+        profileNameView = header.findViewById(R.id.profileName)
+        profileEmailView = header.findViewById(R.id.profileEmail)
+        profileLanguageView = header.findViewById(R.id.profileLanguage)
+        profileJoinedView = header.findViewById(R.id.profileJoined)
+
         container.addView(header)
 
         row(container, "🎙️", R.string.menu_voice, R.string.menu_voice_sub, VoiceCheckActivity::class.java)
@@ -259,6 +273,62 @@ class MainActivity : AppCompatActivity() {
             UiKit.addMenuRow(container, "🔐", getString(R.string.menu_login), getString(R.string.menu_login_sub)) {
                 startActivity(Intent(this, AuthActivity::class.java))
             }
+        }
+
+        profileBuiltForLoggedIn = loggedIn
+    }
+
+    private fun updateProfileData(fetchRemote: Boolean = false) {
+        val loggedIn = Session.isLoggedIn(this)
+        ensureProfileBuilt(loggedIn)
+
+        val nameView = profileNameView ?: return
+        val emailView = profileEmailView ?: return
+        val languageView = profileLanguageView ?: return
+        val joinedView = profileJoinedView ?: return
+
+        nameView.text = if (loggedIn) Session.userName(this) else getString(R.string.profile_guest)
+        emailView.text = if (loggedIn) Session.userEmail(this) else getString(R.string.profile_guest_sub)
+
+        if (loggedIn) {
+            val cachedLang = Session.userLanguage(this)
+            if (cachedLang.isNotBlank()) {
+                languageView.visibility = View.VISIBLE
+                languageView.text = "Language: $cachedLang"
+            } else {
+                languageView.visibility = View.GONE
+            }
+
+            val cachedJoined = Session.userCreatedAt(this)
+            if (cachedJoined.isNotBlank()) {
+                joinedView.visibility = View.VISIBLE
+                joinedView.text = "Joined: $cachedJoined"
+            } else {
+                joinedView.visibility = View.GONE
+            }
+
+            if (fetchRemote) {
+                val userId = Session.userId(this)
+                lifecycleScope.launch {
+                    val profile = AppServices.userRepository(applicationContext).getProfile(userId)
+                    if (profile != null) {
+                        Session.updateProfile(this@MainActivity, profile)
+                        nameView.text = profile.name
+                        emailView.text = profile.email
+                        if (profile.language.isNotBlank()) {
+                            languageView.visibility = View.VISIBLE
+                            languageView.text = "Language: ${profile.language}"
+                        }
+                        if (profile.createdAt.isNotBlank()) {
+                            joinedView.visibility = View.VISIBLE
+                            joinedView.text = "Joined: ${profile.createdAt}"
+                        }
+                    }
+                }
+            }
+        } else {
+            languageView.visibility = View.GONE
+            joinedView.visibility = View.GONE
         }
     }
 
@@ -328,28 +398,103 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         // The user may have just logged in from the Profile tab.
         if (::panelProfile.isInitialized) {
-            buildProfile()
+            updateProfileData(fetchRemote = false)
             updateGreeting()
         }
     }
 
+    private fun initForegroundLocation() {
+        if (locationProvider.hasLocationPermission()) {
+            locationProvider.getLastKnownCoordinates()
+        } else if (!hasPromptedLocationPermission) {
+            hasPromptedLocationPermission = true
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+        }
+    }
+
     private fun answerQuestion(question: String) {
+        val classification = QueryProcessor.classifyTravelIntent(question)
+        val needsLocation = classification.intent == TravelIntent.TRANSPORT_NEARBY ||
+            classification.intent == TravelIntent.NEARBY_ATTRACTIONS ||
+            classification.intent == TravelIntent.DISTANCE_DIRECTIONS
+
+        if (needsLocation && !locationProvider.hasLocationPermission() && !hasPromptedLocationPermission) {
+            hasPromptedLocationPermission = true
+            pendingQuestion = question
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
+            return
+        }
 
         hideKeyboard()
         answerText.text = getString(R.string.thinking)
         setBusy(true)
+        saathiView.setState(SaathiView.State.THINKING)
 
         lifecycleScope.launch {
-            val answer = repository.answer(question)
-            answerText.text = answer.text
-            speaker.speak(answer.text)
-            setBusy(false)
+            val coords = if (needsLocation && locationProvider.hasLocationPermission()) {
+                locationProvider.getFreshCoordinates() ?: locationProvider.getLastKnownCoordinates()
+            } else {
+                null
+            }
+
+            try {
+                val answer = repository.answer(question, coords?.first, coords?.second)
+                answerText.text = answer.text
+                if (!speaker.speak(answer.text)) {
+                    saathiView.setState(SaathiView.State.IDLE)
+                }
+            } catch (e: Exception) {
+                val fallback = getString(R.string.no_answer)
+                answerText.text = fallback
+                saathiView.setState(SaathiView.State.IDLE)
+            } finally {
+                if (saathiView.state == SaathiView.State.THINKING && !Prefs.voiceEnabled(this@MainActivity)) {
+                    saathiView.setState(SaathiView.State.IDLE)
+                }
+                setBusy(false)
+            }
+        }
+    }
+
+    private fun executeQuestionAnswer(question: String, userLat: Double?, userLon: Double?) {
+
+        hideKeyboard()
+        answerText.text = getString(R.string.thinking)
+        setBusy(true)
+        saathiView.setState(SaathiView.State.THINKING)
+
+        lifecycleScope.launch {
+            try {
+                val answer = repository.answer(question, userLat, userLon)
+                answerText.text = answer.text
+                if (!speaker.speak(answer.text)) {
+                    saathiView.setState(SaathiView.State.IDLE)
+                }
+            } catch (e: Exception) {
+                val fallback = getString(R.string.no_answer)
+                answerText.text = fallback
+                saathiView.setState(SaathiView.State.IDLE)
+            } finally {
+                if (saathiView.state == SaathiView.State.THINKING && !Prefs.voiceEnabled(this@MainActivity)) {
+                    saathiView.setState(SaathiView.State.IDLE)
+                }
+                setBusy(false)
+            }
         }
     }
 
     private fun setBusy(busy: Boolean) {
         askButton.isEnabled = !busy
-        voiceButton.isEnabled = !busy
     }
 
     private fun startVoiceInput() {
@@ -364,15 +509,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         try {
+            saathiView.setState(SaathiView.State.LISTENING)
             voiceResultLauncher.launch(intent)
         } catch (e: ActivityNotFoundException) {
+            saathiView.setState(SaathiView.State.IDLE)
             Toast.makeText(this, R.string.voice_unavailable, Toast.LENGTH_LONG).show()
         }
     }
 
     private fun hideKeyboard() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(questionInput.windowToken, 0)
+        val token = currentFocus?.windowToken
+        if (token != null) {
+            imm.hideSoftInputFromWindow(token, 0)
+        }
     }
 
     override fun onStop() {

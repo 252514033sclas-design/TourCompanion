@@ -13,6 +13,8 @@ object Session {
     fun userId(context: Context): Long = sp(context).getLong("user_id", -1L)
     fun userName(context: Context): String = sp(context).getString("user_name", "") ?: ""
     fun userEmail(context: Context): String = sp(context).getString("user_email", "") ?: ""
+    fun userLanguage(context: Context): String = sp(context).getString("user_language", "English") ?: "English"
+    fun userCreatedAt(context: Context): String = sp(context).getString("user_created_at", "") ?: ""
 
     fun isLoggedIn(context: Context): Boolean = userId(context) > 0
 
@@ -26,7 +28,18 @@ object Session {
             .putLong("user_id", user.id)
             .putString("user_name", user.name)
             .putString("user_email", user.email)
+            .putString("user_language", user.language)
+            .putString("user_created_at", user.createdAt)
             .putBoolean("guest", false)
+            .apply()
+    }
+
+    fun updateProfile(context: Context, user: User) {
+        sp(context).edit()
+            .putString("user_name", user.name)
+            .putString("user_email", user.email)
+            .putString("user_language", user.language)
+            .putString("user_created_at", user.createdAt)
             .apply()
     }
 

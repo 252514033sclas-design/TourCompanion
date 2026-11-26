@@ -26,6 +26,7 @@ import java.util.Locale
 class VoiceCheckActivity : AppCompatActivity() {
 
     private lateinit var speaker: Speaker
+    private lateinit var voiceAvatar: SaathiView
     private lateinit var statusText: TextView
     private lateinit var heardText: TextView
 
@@ -37,6 +38,7 @@ class VoiceCheckActivity : AppCompatActivity() {
 
     private val listenLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            voiceAvatar.setState(SaathiView.State.IDLE)
             val heard = result.data
                 ?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
                 ?.firstOrNull()
@@ -56,8 +58,9 @@ class VoiceCheckActivity : AppCompatActivity() {
 
         statusText = findViewById(R.id.voiceStatus)
         heardText = findViewById(R.id.heardText)
+        voiceAvatar = findViewById(R.id.voiceAvatar)
 
-        speaker = Speaker(this, findViewById(R.id.voiceAvatar))
+        speaker = Speaker(this, voiceAvatar)
         speaker.onStateChanged = { refresh() }
 
         findViewById<Button>(R.id.testSpeakButton).setOnClickListener {
@@ -111,8 +114,10 @@ class VoiceCheckActivity : AppCompatActivity() {
             putExtra(RecognizerIntent.EXTRA_PROMPT, getString(R.string.voice_prompt))
         }
         try {
+            voiceAvatar.setState(SaathiView.State.LISTENING)
             listenLauncher.launch(intent)
         } catch (e: ActivityNotFoundException) {
+            voiceAvatar.setState(SaathiView.State.IDLE)
             toast(R.string.voice_unavailable)
         }
     }
@@ -128,7 +133,7 @@ class VoiceCheckActivity : AppCompatActivity() {
             speaker.hasFailed -> "❌ Speech engine not available or English voice data missing"
             else -> "⏳ Starting speech engine…"
         }
-        lines += languageLine("English voice", Locale.ENGLISH)
+        lines += languageLine("English voice", Locale.forLanguageTag("en-IN"))
         lines += languageLine("Tamil voice", Locale.forLanguageTag("ta-IN"))
         lines += languageLine("Hindi voice", Locale.forLanguageTag("hi-IN"))
         lines += if (micGranted) "✅ Microphone permission granted" else "⚠️ Microphone permission not granted yet"
